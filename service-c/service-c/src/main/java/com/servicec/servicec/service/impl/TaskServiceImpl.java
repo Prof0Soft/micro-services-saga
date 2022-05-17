@@ -3,11 +3,14 @@ package com.servicec.servicec.service.impl;
 import com.servicec.servicec.dto.TaskInfoDto;
 import com.servicec.servicec.dto.TaskStatusDto;
 import com.servicec.servicec.entity.Task;
+import com.servicec.servicec.exception.BadRequestException;
 import com.servicec.servicec.exception.NotFoundException;
 import com.servicec.servicec.mapper.TaskMapper;
 import com.servicec.servicec.repository.TaskRepository;
 import com.servicec.servicec.service.TaskService;
+import com.servicec.servicec.type.TaskStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.UUID;
 
@@ -37,9 +40,18 @@ public class TaskServiceImpl implements TaskService {
                 .orElseThrow(() -> new NotFoundException(taskId));
     }
 
+    @Transactional
     @Override
     public TaskStatusDto cancelTask(final String taskId) {
-        return null;
+        return repository.findById(UUID.fromString(taskId))
+                .map(task -> {
+                    if (task.getStatus() == TaskStatus.RUNNING){
+                        throw new BadRequestException(taskId);
+                    }
+                    task.setStatus(TaskStatus.CANCELING);
+                    return mapper.toStatusDto(task);
+                })
+                .orElseThrow(() -> new NotFoundException(taskId));
     }
 
     @Override

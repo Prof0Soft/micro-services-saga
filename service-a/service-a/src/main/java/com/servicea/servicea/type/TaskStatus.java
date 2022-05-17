@@ -7,6 +7,7 @@ public enum TaskStatus {
     CREATED,
     RUNNING,
     DONE,
+    CANCELING,
     CANCELED,
     REVERTED,
     FAILED

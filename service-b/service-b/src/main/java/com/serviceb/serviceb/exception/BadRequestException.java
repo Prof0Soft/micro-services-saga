@@ -7,9 +7,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * @author M.Bezmen
  */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class NotFoundException extends RuntimeException {
-
-    public NotFoundException(final String taskId) {
-        super("Task with id: " + taskId + " not found.");
+public class BadRequestException extends RuntimeException {
+    public BadRequestException(final String taskId) {
+        super("Task with id: " + taskId + "not running.");
     }
 }

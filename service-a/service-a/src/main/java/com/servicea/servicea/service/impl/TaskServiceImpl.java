@@ -3,10 +3,12 @@ package com.servicea.servicea.service.impl;
 import com.servicea.servicea.dto.TaskInfoDto;
 import com.servicea.servicea.dto.TaskStatusDto;
 import com.servicea.servicea.entity.Task;
+import com.servicea.servicea.exception.BadRequestException;
 import com.servicea.servicea.exception.NotFoundException;
 import com.servicea.servicea.mapper.TaskMapper;
 import com.servicea.servicea.repository.TaskRepository;
 import com.servicea.servicea.service.TaskService;
+import com.servicea.servicea.type.TaskStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -40,9 +42,18 @@ public class TaskServiceImpl implements TaskService {
                 .orElseThrow(() -> new NotFoundException(taskId));
     }
 
+    @Transactional
     @Override
     public TaskStatusDto cancelTask(final String taskId) {
-        return null;
+        return repository.findById(UUID.fromString(taskId))
+                .map(task -> {
+                    if (task.getStatus() == TaskStatus.RUNNING){
+                        throw new BadRequestException(taskId);
+                    }
+                    task.setStatus(TaskStatus.CANCELING);
+                    return mapper.toStatusDto(task);
+                })
+                .orElseThrow(() -> new NotFoundException(taskId));
     }
 
     @Override
