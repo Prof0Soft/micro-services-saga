@@ -13,6 +13,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 @FeignClient(name = "saga-client", configuration = SagaClientConfig.class, url = "${client.saga.host}")
 public interface SagaClient {
 
-    @PostMapping("client.saga.result")
+    @PostMapping("${client.saga.result}")
     ResponseEntity<?> sendResult(@RequestBody ResultDto result);
 }

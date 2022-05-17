@@ -57,6 +57,7 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskStatusDto revertTask(final String taskId) {
+
         return null;
     }
 }
