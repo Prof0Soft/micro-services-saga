@@ -3,6 +3,7 @@ package com.serviceb.serviceb.service.impl;
 import com.serviceb.serviceb.dto.TaskInfoDto;
 import com.serviceb.serviceb.dto.TaskStatusDto;
 import com.serviceb.serviceb.entity.Task;
+import com.serviceb.serviceb.exception.NotFoundException;
 import com.serviceb.serviceb.mapper.TaskMapper;
 import com.serviceb.serviceb.repository.TaskRepository;
 import com.serviceb.serviceb.service.TaskService;
@@ -22,6 +23,7 @@ public class TaskServiceImpl implements TaskService {
         this.repository = repository;
         this.mapper = mapper;
     }
+
     @Override
     public TaskInfoDto createTask() {
         final Task savedTask = repository.save(new Task());
@@ -30,7 +32,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskStatusDto getTaskStatus(final String taskId) {
-        return null;
+        return repository.findById(UUID.fromString(taskId))
+                .map(mapper::toStatusDto)
+                .orElseThrow(() -> new NotFoundException(taskId));
     }
 
     @Override

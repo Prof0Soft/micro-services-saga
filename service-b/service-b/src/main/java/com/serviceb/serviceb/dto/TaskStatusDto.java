@@ -1,5 +1,6 @@
 package com.serviceb.serviceb.dto;
 
+import com.serviceb.serviceb.type.TaskStatus;
 import lombok.Data;
 
 /**
@@ -8,5 +9,5 @@ import lombok.Data;
 @Data
 public class TaskStatusDto {
     private String id;
-    private String status;
+    private TaskStatus status;
 }

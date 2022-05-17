@@ -3,11 +3,14 @@ package com.servicea.servicea.service.impl;
 import com.servicea.servicea.dto.TaskInfoDto;
 import com.servicea.servicea.dto.TaskStatusDto;
 import com.servicea.servicea.entity.Task;
+import com.servicea.servicea.exception.NotFoundException;
 import com.servicea.servicea.mapper.TaskMapper;
 import com.servicea.servicea.repository.TaskRepository;
 import com.servicea.servicea.service.TaskService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.UUID;
 
 /**
  * @author M.Bezmen
@@ -32,7 +35,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskStatusDto getTaskStatus(final String taskId) {
-        return null;
+        return repository.findById(UUID.fromString(taskId))
+                .map(mapper::toStatusDto)
+                .orElseThrow(() -> new NotFoundException(taskId));
     }
 
     @Override

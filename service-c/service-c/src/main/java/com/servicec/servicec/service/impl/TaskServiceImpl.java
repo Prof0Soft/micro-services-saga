@@ -3,10 +3,13 @@ package com.servicec.servicec.service.impl;
 import com.servicec.servicec.dto.TaskInfoDto;
 import com.servicec.servicec.dto.TaskStatusDto;
 import com.servicec.servicec.entity.Task;
+import com.servicec.servicec.exception.NotFoundException;
 import com.servicec.servicec.mapper.TaskMapper;
 import com.servicec.servicec.repository.TaskRepository;
 import com.servicec.servicec.service.TaskService;
 import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 /**
  * @author M.Bezmen
@@ -29,7 +32,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Override
     public TaskStatusDto getTaskStatus(final String taskId) {
-        return null;
+        return repository.findById(UUID.fromString(taskId))
+                .map(mapper::toStatusDto)
+                .orElseThrow(() -> new NotFoundException(taskId));
     }
 
     @Override

@@ -1,5 +1,6 @@
 package com.servicec.servicec.dto;
 
+import com.servicec.servicec.type.TaskStatus;
 import lombok.Data;
 
 /**
@@ -8,5 +9,5 @@ import lombok.Data;
 @Data
 public class TaskStatusDto {
     private String id;
-    private String status;
+    private TaskStatus status;
 }
