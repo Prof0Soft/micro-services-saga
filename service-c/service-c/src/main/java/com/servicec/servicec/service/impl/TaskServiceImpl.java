@@ -45,7 +45,7 @@ public class TaskServiceImpl implements TaskService {
     public TaskStatusDto cancelTask(final String taskId) {
         return repository.findById(UUID.fromString(taskId))
                 .map(task -> {
-                    if (task.getStatus() == TaskStatus.RUNNING){
+                    if (!task.getStatus().equals(TaskStatus.RUNNING)){
                         throw new BadRequestException(taskId);
                     }
                     task.setStatus(TaskStatus.CANCELING);
