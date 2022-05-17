@@ -27,6 +27,7 @@ public class TaskServiceImpl implements TaskService {
         this.mapper = mapper;
     }
 
+    @Transactional
     @Override
     public TaskInfoDto createTask() {
         final Task savedTask = repository.save(new Task());
