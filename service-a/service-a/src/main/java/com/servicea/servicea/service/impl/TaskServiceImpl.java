@@ -37,6 +37,8 @@ public class TaskServiceImpl implements TaskService {
     @Override
     public TaskInfoDto createTask() {
         final Task savedTask = repository.save(new Task());
+        log.info("Task {} created", savedTask.getId());
+        log.debug("Task {} created", savedTask);
         return mapper.toDto(savedTask);
     }
 
@@ -44,7 +46,10 @@ public class TaskServiceImpl implements TaskService {
     public TaskStatusDto getTaskStatus(final String taskId) {
         return repository.findById(UUID.fromString(taskId))
                 .map(mapper::toStatusDto)
-                .orElseThrow(() -> new NotFoundException(taskId));
+                .orElseThrow(() -> {
+                    log.error("Task with id: {} not found", taskId);
+                    throw new NotFoundException(taskId);
+                });
     }
 
     @Transactional
@@ -53,12 +58,16 @@ public class TaskServiceImpl implements TaskService {
         return repository.findById(UUID.fromString(taskId))
                 .map(task -> {
                     if (!task.getStatus().equals(TaskStatus.RUNNING)) {
+                        log.error("Task with id: {} not running. Task: {}", task.getId(), task);
                         throw new BadRequestException(taskId, "is not running.");
                     }
                     task.setStatus(TaskStatus.CANCELING);
                     return mapper.toStatusDto(task);
                 })
-                .orElseThrow(() -> new NotFoundException(taskId));
+                .orElseThrow(() -> {
+                    log.error("Task with id: {} not found.", taskId);
+                    throw new NotFoundException(taskId);
+                });
     }
 
     @Transactional
@@ -67,10 +76,12 @@ public class TaskServiceImpl implements TaskService {
         try {
             Optional<Task> taskOptional = repository.findById(UUID.fromString(taskId));
             if (taskOptional.isEmpty()) {
+                log.error("Task with id: {} not found.", taskId);
                 throw new NotFoundException(taskId);
             }
             final Task task = taskOptional.get();
             if (!task.getStatus().equals(TaskStatus.DONE)) {
+                log.error("Task with id: {} not done. Task: {}", task.getId(), task);
                 throw new BadRequestException(taskId, "is not done.");
             }
             revert.revert(task);
