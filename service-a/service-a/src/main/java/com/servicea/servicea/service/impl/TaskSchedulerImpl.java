@@ -9,6 +9,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.stereotype.Component;
 
+import javax.annotation.PostConstruct;
+
 /**
  * @author M.Bezmen
  */
@@ -41,6 +43,14 @@ public class TaskSchedulerImpl implements TaskScheduler {
             schedulerExecutor.execute(() -> {
                 taskExecutor.execute(task);
             });
+        });
+    }
+
+    @PostConstruct
+    private void errorFixer() {
+        repository.findByStatus(TaskStatus.RUNNING).forEach(task -> {
+            task.setStatus(TaskStatus.CREATED);
+            repository.save(task);
         });
     }
 }

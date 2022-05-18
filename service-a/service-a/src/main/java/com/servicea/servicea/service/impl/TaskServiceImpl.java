@@ -33,7 +33,6 @@ public class TaskServiceImpl implements TaskService {
         this.revert = revert;
     }
 
-
     @Transactional
     @Override
     public TaskInfoDto createTask() {
