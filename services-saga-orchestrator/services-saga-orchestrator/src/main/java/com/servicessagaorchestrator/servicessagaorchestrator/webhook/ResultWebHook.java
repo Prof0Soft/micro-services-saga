@@ -1,4 +1,4 @@
-package com.servicessagaorchestrator.servicessagaorchestrator.controller;
+package com.servicessagaorchestrator.servicessagaorchestrator.webhook;
 
 import com.servicessagaorchestrator.servicessagaorchestrator.dto.ResultDto;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @author M.Bezmen
  */
 @RestController
-public class ResultController {
+public class ResultWebHook {
 
     @PostMapping("/result")
     public void submitTaskResult(@RequestBody ResultDto result) {

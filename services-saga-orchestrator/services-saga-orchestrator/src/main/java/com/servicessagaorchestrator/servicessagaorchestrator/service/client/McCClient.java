@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.PostMapping;
  * @author M.Bezmen
  */
 @FeignClient(name = "mc-c-client", configuration = McCClientConfig.class, url = "${client.mcc.host}")
-public interface McCClient {
+public interface McCClient extends StartProcessClientService {
 
     @PostMapping("/tasks")
     TaskInfoDto createTask();

@@ -25,7 +25,9 @@ public class BookRoomExecutor implements TaskExecutor {
     private final TaskRepository taskRepository;
     private final SagaClient client;
 
-    public BookRoomExecutor(final OrderRepository orderRepository, final TaskRepository taskRepository, final SagaClient client) {
+    public BookRoomExecutor(final OrderRepository orderRepository,
+                            final TaskRepository taskRepository,
+                            final SagaClient client) {
         this.orderRepository = orderRepository;
         this.taskRepository = taskRepository;
         this.client = client;
