@@ -87,7 +87,7 @@ public class TaskServiceImpl implements TaskService {
         return repository.findById(UUID.fromString(taskId)).map(task -> {
             task.setStatus(newStatus);
             return repository.save(task);
-        }).orElseThrow(() -> new IllegalArgumentException(""));
+        }).orElseThrow(() -> new IllegalArgumentException("Can't update task status for task: " + taskId));
 
     }
 }
