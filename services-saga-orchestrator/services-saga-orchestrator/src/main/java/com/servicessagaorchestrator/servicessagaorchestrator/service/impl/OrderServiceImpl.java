@@ -45,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
 
         final SagaProcess saved = sagaProcessRepository.save(sagaProcess);
 
-        sagaService.startSaga(saved);
+        sagaService.initSaga(saved);
 
         return orderMapper.toDto(saved.getOrder());
     }

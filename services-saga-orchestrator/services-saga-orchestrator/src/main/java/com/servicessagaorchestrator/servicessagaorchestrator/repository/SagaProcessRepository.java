@@ -10,4 +10,5 @@ import org.springframework.stereotype.Repository;
  */
 @Repository
 public interface SagaProcessRepository extends JpaRepository<SagaProcess, Long> {
+    SagaProcess findByOrderId(String orderId);
 }

@@ -1,6 +1,7 @@
 package com.servicessagaorchestrator.servicessagaorchestrator.service.client;
 
 import com.servicessagaorchestrator.servicessagaorchestrator.dto.TaskInfoDto;
+import com.servicessagaorchestrator.servicessagaorchestrator.dto.TaskStatusDto;
 
 /**
  * @author Sergey B.
@@ -8,4 +9,8 @@ import com.servicessagaorchestrator.servicessagaorchestrator.dto.TaskInfoDto;
  */
 public interface StartProcessClientService {
     TaskInfoDto createTask(String taskId);
+
+    TaskStatusDto cancelTask(String taskId);
+
+    TaskStatusDto revertTask(String taskId);
 }

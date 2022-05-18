@@ -1,5 +1,6 @@
 package com.servicessagaorchestrator.servicessagaorchestrator.service;
 
+import com.servicessagaorchestrator.servicessagaorchestrator.dto.ResultDto;
 import com.servicessagaorchestrator.servicessagaorchestrator.entity.SagaProcess;
 
 /**
@@ -8,5 +9,8 @@ import com.servicessagaorchestrator.servicessagaorchestrator.entity.SagaProcess;
  */
 public interface SagaService {
 
-    void startSaga(final SagaProcess flow);
+    void initSaga(final SagaProcess flow);
+
+    void nextSagaStep(final ResultDto result);
+
 }

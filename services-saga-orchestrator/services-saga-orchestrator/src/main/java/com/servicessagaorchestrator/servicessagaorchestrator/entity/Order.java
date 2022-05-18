@@ -1,5 +1,6 @@
 package com.servicessagaorchestrator.servicessagaorchestrator.entity;
 
+import com.servicessagaorchestrator.servicessagaorchestrator.type.TaskStatus;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
@@ -7,6 +8,8 @@ import org.hibernate.annotations.Parameter;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
@@ -34,5 +37,9 @@ public class Order extends AbstractEntity {
     )
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
+
+    @Column(name = "status")
+    @Enumerated(EnumType.STRING)
+    private TaskStatus status;
 
 }
