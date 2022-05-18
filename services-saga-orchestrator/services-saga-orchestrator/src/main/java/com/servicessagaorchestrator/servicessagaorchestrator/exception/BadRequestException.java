@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class BadRequestException extends RuntimeException {
-    public BadRequestException(final String taskId, final String message) {
-        super("Task with id: " + taskId + message);
+    public BadRequestException(final String taskId) {
+        super("Order with id: " + taskId + "can't be canceling.");
     }
 }

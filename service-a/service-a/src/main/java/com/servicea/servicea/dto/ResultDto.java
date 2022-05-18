@@ -9,5 +9,6 @@ import lombok.Data;
 @Data
 public class ResultDto {
     private String taskId;
+    private String serviceName;
     private TaskStatus status;
 }

@@ -35,9 +35,10 @@ public class TaskServiceImpl implements TaskService {
 
     @Transactional
     @Override
-    public TaskInfoDto createTask(final String taskId) {
+    public TaskInfoDto createTask(final String taskId, final String serviceName) {
         final Task task = new Task();
         task.setId(UUID.fromString(taskId));
+        task.setServiceName(serviceName);
 
         final Task savedTask = repository.save(task);
 

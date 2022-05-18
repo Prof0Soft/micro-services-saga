@@ -1,7 +1,7 @@
 package com.servicessagaorchestrator.servicessagaorchestrator.entity;
 
-import com.servicessagaorchestrator.servicessagaorchestrator.type.ServiceName;
-import com.servicessagaorchestrator.servicessagaorchestrator.type.TaskStatus;
+import com.servicessagaorchestrator.servicessagaorchestrator.enums.BookingFlow;
+import com.servicessagaorchestrator.servicessagaorchestrator.enums.TaskStatus;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -28,7 +28,7 @@ public class Step {
 
     @Column(name = "service_name")
     @Enumerated(EnumType.STRING)
-    private ServiceName serviceName;
+    private BookingFlow bookingFlow;
 
     @Column(name = "flow_order")
     private Integer flowOrder;

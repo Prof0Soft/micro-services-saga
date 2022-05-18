@@ -55,6 +55,7 @@ public class BookRoomExecutor implements TaskExecutor {
             final ResultDto resultDto = new ResultDto();
             resultDto.setTaskId(task.getId().toString());
             resultDto.setStatus(task.getStatus());
+            resultDto.setServiceName(task.getServiceName());
             client.sendResult(resultDto);
         }
     }

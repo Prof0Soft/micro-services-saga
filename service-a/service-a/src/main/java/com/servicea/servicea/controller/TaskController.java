@@ -23,8 +23,8 @@ public class TaskController {
     }
 
     @PostMapping
-    public TaskInfoDto createTask(@RequestBody final String taskId) {
-        return taskService.createTask(taskId);
+    public TaskInfoDto createTask(@RequestBody final String taskId, final String serviceName) {
+        return taskService.createTask(taskId, serviceName);
     }
 
     @GetMapping("/{taskId}/status")

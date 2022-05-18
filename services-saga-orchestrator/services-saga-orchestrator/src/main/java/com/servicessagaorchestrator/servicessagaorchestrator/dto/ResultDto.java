@@ -1,6 +1,6 @@
 package com.servicessagaorchestrator.servicessagaorchestrator.dto;
 
-import com.servicessagaorchestrator.servicessagaorchestrator.type.TaskStatus;
+import com.servicessagaorchestrator.servicessagaorchestrator.enums.TaskStatus;
 import lombok.Data;
 
 /**
@@ -9,5 +9,6 @@ import lombok.Data;
 @Data
 public class ResultDto {
     private String taskId;
+    private String serviceName;
     private TaskStatus status;
 }

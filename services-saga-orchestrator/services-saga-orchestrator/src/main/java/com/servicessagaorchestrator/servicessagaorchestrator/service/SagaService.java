@@ -13,4 +13,6 @@ public interface SagaService {
 
     void nextSagaStep(final ResultDto result);
 
+    void cancelSaga(final String taskId);
+
 }

@@ -1,6 +1,6 @@
 package com.servicessagaorchestrator.servicessagaorchestrator.entity;
 
-import com.servicessagaorchestrator.servicessagaorchestrator.type.TaskStatus;
+import com.servicessagaorchestrator.servicessagaorchestrator.enums.TaskStatus;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;

@@ -26,6 +26,9 @@ public class Task extends AbstractEntity {
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 
+    @Column(name = "serviceName")
+    private String serviceName;
+
     @Column(name = "status")
     @Enumerated(EnumType.STRING)
     private TaskStatus status;

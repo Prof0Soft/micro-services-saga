@@ -4,19 +4,17 @@ import com.servicessagaorchestrator.servicessagaorchestrator.dto.OrderDto;
 import com.servicessagaorchestrator.servicessagaorchestrator.dto.OrderStatusDto;
 import com.servicessagaorchestrator.servicessagaorchestrator.entity.Order;
 import com.servicessagaorchestrator.servicessagaorchestrator.entity.SagaProcess;
-import com.servicessagaorchestrator.servicessagaorchestrator.entity.Step;
 import com.servicessagaorchestrator.servicessagaorchestrator.exception.NotFoundException;
 import com.servicessagaorchestrator.servicessagaorchestrator.mapper.OrderMapper;
 import com.servicessagaorchestrator.servicessagaorchestrator.repository.OrderRepository;
 import com.servicessagaorchestrator.servicessagaorchestrator.repository.SagaProcessRepository;
 import com.servicessagaorchestrator.servicessagaorchestrator.service.OrderService;
 import com.servicessagaorchestrator.servicessagaorchestrator.service.SagaService;
-import com.servicessagaorchestrator.servicessagaorchestrator.type.ServiceName;
-import com.servicessagaorchestrator.servicessagaorchestrator.type.TaskStatus;
+import com.servicessagaorchestrator.servicessagaorchestrator.enums.BookingFlow;
+import com.servicessagaorchestrator.servicessagaorchestrator.enums.TaskStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -47,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
         final SagaProcess sagaProcess = new SagaProcess();
         sagaProcess.setStatus(TaskStatus.NEW);
         sagaProcess.setOrder(orderEntity);
-        sagaProcess.setSteps(buildFlow());
+        sagaProcess.setSteps(BookingFlow.buildFlow());
 
         final SagaProcess saved = sagaProcessRepository.save(sagaProcess);
 
@@ -68,24 +66,5 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderStatusDto cancelOrder(final String id) {
         return null;
-    }
-
-    private List<Step> buildFlow() {
-        final Step one = new Step();
-        one.setFlowOrder(1);
-        one.setStatus(TaskStatus.NEW);
-        one.setServiceName(ServiceName.SERVICE_A);
-
-        final Step two = new Step();
-        two.setFlowOrder(2);
-        two.setStatus(TaskStatus.NEW);
-        two.setServiceName(ServiceName.SERVICE_B);
-
-        final Step three = new Step();
-        three.setFlowOrder(3);
-        three.setStatus(TaskStatus.NEW);
-        three.setServiceName(ServiceName.SERVICE_C);
-
-        return List.of(one, two, three);
     }
 }

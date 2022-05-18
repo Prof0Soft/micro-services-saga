@@ -1,4 +1,4 @@
-package com.servicessagaorchestrator.servicessagaorchestrator.type;
+package com.servicessagaorchestrator.servicessagaorchestrator.enums;
 
 /**
  * @author M.Bezmen

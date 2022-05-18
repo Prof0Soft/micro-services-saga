@@ -7,7 +7,7 @@ import com.servicea.servicea.dto.TaskStatusDto;
  * @author M.Bezmen
  */
 public interface TaskService {
-    TaskInfoDto createTask(String taskId);
+    TaskInfoDto createTask(String taskId, String serviceName);
 
     TaskStatusDto getTaskStatus(final String taskId);
 
