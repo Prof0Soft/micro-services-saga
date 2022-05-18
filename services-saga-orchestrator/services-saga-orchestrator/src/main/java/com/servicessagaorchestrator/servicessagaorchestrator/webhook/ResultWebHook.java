@@ -13,6 +13,6 @@ public class ResultWebHook {
 
     @PostMapping("/result")
     public void submitTaskResult(@RequestBody ResultDto result) {
-
+        System.out.println(result);
     }
 }

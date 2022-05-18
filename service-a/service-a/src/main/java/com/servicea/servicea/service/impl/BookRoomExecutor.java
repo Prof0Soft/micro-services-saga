@@ -45,10 +45,12 @@ public class BookRoomExecutor implements TaskExecutor {
             final Order order = new Order();
             order.setTask(task);
             task.setStatus(TaskStatus.DONE);
+            taskRepository.save(task);
             orderRepository.save(order);
         } catch (Exception e) {
             log.error("Error execute task with id: {}", task.getId(), e);
             task.setStatus(TaskStatus.FAILED);
+            taskRepository.save(task);
         } finally {
             final ResultDto resultDto = new ResultDto();
             resultDto.setTaskId(task.getId().toString());

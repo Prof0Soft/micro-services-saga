@@ -23,17 +23,6 @@ import java.util.UUID;
 @Entity
 public class Task extends AbstractEntity {
     @Id
-    @GeneratedValue(generator = "UUID")
-    @GenericGenerator(
-            name = "UUID",
-            strategy = "org.hibernate.id.UUIDGenerator",
-            parameters = {
-                    @Parameter(
-                            name = "uuid_gen_strategy_class",
-                            value = "org.hibernate.id.uuid.CustomVersionOneStrategy"
-                    )
-            }
-    )
     @Column(name = "id", updatable = false, nullable = false)
     private UUID id;
 

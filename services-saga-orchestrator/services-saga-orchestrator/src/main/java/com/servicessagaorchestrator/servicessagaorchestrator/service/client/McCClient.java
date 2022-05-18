@@ -7,6 +7,7 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 
 /**
  * @author M.Bezmen
@@ -15,7 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 public interface McCClient extends StartProcessClientService {
 
     @PostMapping("/tasks")
-    TaskInfoDto createTask();
+    TaskInfoDto createTask(@RequestBody String taskId);
 
     @GetMapping("/{taskId}/status")
     TaskStatusDto getTaskStatus(@PathVariable final String taskId);

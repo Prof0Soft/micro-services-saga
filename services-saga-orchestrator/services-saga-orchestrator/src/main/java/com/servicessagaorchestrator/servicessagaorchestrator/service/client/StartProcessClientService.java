@@ -7,5 +7,5 @@ import com.servicessagaorchestrator.servicessagaorchestrator.dto.TaskInfoDto;
  * 18.05.2022
  */
 public interface StartProcessClientService {
-    TaskInfoDto createTask();
+    TaskInfoDto createTask(String taskId);
 }

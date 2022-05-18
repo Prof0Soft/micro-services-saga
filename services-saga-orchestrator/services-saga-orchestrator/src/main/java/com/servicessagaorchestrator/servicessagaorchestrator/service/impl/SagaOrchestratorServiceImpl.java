@@ -7,6 +7,7 @@ import com.servicessagaorchestrator.servicessagaorchestrator.service.client.Star
 import com.servicessagaorchestrator.servicessagaorchestrator.type.ServiceName;
 import com.servicessagaorchestrator.servicessagaorchestrator.type.TaskStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Map;
 import java.util.Optional;
@@ -24,15 +25,14 @@ public class SagaOrchestratorServiceImpl implements SagaService {
         this.clients = clients;
     }
 
-
+    @Transactional
     @Override
     public void startSaga(final SagaProcess flow) {
         final Optional<Step> nextStep = getNextStep(flow);
-
         nextStep.ifPresent(step -> {
             final StartProcessClientService startProcessClientService = clients.get(step.getServiceName());
-         var result =   startProcessClientService.createTask();
-         flow.setActiveStepId(step.getId());
+            startProcessClientService.createTask(flow.getOrder().getId().toString());
+            flow.setActiveStepId(step.getId());
         });
     }
 
