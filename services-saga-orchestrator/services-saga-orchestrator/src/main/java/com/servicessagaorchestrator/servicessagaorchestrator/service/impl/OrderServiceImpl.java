@@ -5,7 +5,9 @@ import com.servicessagaorchestrator.servicessagaorchestrator.dto.OrderStatusDto;
 import com.servicessagaorchestrator.servicessagaorchestrator.entity.Order;
 import com.servicessagaorchestrator.servicessagaorchestrator.entity.SagaProcess;
 import com.servicessagaorchestrator.servicessagaorchestrator.entity.Step;
+import com.servicessagaorchestrator.servicessagaorchestrator.exception.NotFoundException;
 import com.servicessagaorchestrator.servicessagaorchestrator.mapper.OrderMapper;
+import com.servicessagaorchestrator.servicessagaorchestrator.repository.OrderRepository;
 import com.servicessagaorchestrator.servicessagaorchestrator.repository.SagaProcessRepository;
 import com.servicessagaorchestrator.servicessagaorchestrator.service.OrderService;
 import com.servicessagaorchestrator.servicessagaorchestrator.service.SagaService;
@@ -15,6 +17,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author Sergey B.
@@ -25,13 +29,15 @@ public class OrderServiceImpl implements OrderService {
     private final SagaService sagaService;
     private final SagaProcessRepository sagaProcessRepository;
     private final OrderMapper orderMapper;
+    private final OrderRepository orderRepository;
 
     public OrderServiceImpl(final SagaProcessRepository sagaProcessRepository,
                             final OrderMapper orderMapper,
-                            final SagaService sagaService) {
+                            final SagaService sagaService, final OrderRepository orderRepository) {
         this.sagaProcessRepository = sagaProcessRepository;
         this.orderMapper = orderMapper;
         this.sagaService = sagaService;
+        this.orderRepository = orderRepository;
     }
 
     @Transactional
@@ -52,8 +58,11 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderStatusDto getOrderStatus(final String id) {
-        // todo: взять статус из базы и отдать
-        return null;
+        Optional<Order> optionalOrder = orderRepository.findById(UUID.fromString(id));
+        if (optionalOrder.isEmpty()) {
+            throw new NotFoundException(id);
+        }
+        return orderMapper.toStatusDto(optionalOrder.get());
     }
 
     @Override
