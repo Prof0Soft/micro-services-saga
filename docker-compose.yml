@@ -28,3 +28,12 @@ services:
       POSTGRES_PASSWORD: servicec
     ports:
       - "5435:5432"
+  orchestrator:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: orchestrator
+      POSTGRES_USER: orchestrator
+      POSTGRES_PASSWORD: orchestrator
+    ports:
+      - "5436:5432"

@@ -37,6 +37,10 @@ public class TaskSchedulerImpl implements TaskScheduler {
     @Scheduled(cron = "${scheduler-task.cron-expression:*/1 * * * * *}", zone = "UTC")
     @Override
     public void getTaskExecution() {
+        if (schedulerExecutor.getActiveCount() != 0) {
+            return;
+        }
+
         repository.findByStatus(TaskStatus.CREATED).forEach(task -> {
             log.info("Task {} is scheduled for execution", task.getId());
             log.debug("Task {} is scheduled for execution", task);
