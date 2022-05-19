@@ -48,6 +48,7 @@ public class TaskSchedulerImpl implements TaskScheduler {
         repository.findByStatus(TaskStatus.CREATED).forEach(task -> {
             log.info("Task {} is scheduled for execution", task.getId());
             log.debug("Task {} is scheduled for execution", task);
+            taskService.runTask(task.getId());
             schedulerExecutor.execute(() -> {
                 taskExecutor.execute(task);
             });
@@ -57,8 +58,6 @@ public class TaskSchedulerImpl implements TaskScheduler {
     @PostConstruct
     private void errorFixer() {
         repository.findByStatus(TaskStatus.RUNNING).forEach(task -> {
-
-            taskService.runTask(task.getId());
             task.setStatus(TaskStatus.CREATED);
             repository.save(task);
         });
