@@ -166,12 +166,12 @@ class SagaOrchestratorServiceImplTest {
         flow.setOrder(order);
 
         when(sagaProcessRepository.findByOrderId(UUID.fromString(taskId))).thenReturn(flow);
-        when(mcBClient.cancelTask(taskId)).thenReturn(new TaskStatusDto());
-        sagaService.cancelSaga(taskId);
+        when(mcBClient.cancelTask(id)).thenReturn(new TaskStatusDto());
+        sagaService.cancelSaga(id);
 
         verify(sagaProcessRepository, times(2)).save(any());
-        verify(mcBClient).cancelTask(taskId);
-        verify(mcAClient, times(2)).revertTask(taskId);
+        verify(mcBClient).cancelTask(id);
+        verify(mcAClient, times(2)).revertTask(id);
 
     }
 
