@@ -19,6 +19,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Map;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.UUID;
 
 /**
  * @author Sergey B.
@@ -70,7 +71,7 @@ public class SagaOrchestratorServiceImpl implements SagaService {
         }
 
         final String taskId = result.getTaskId();
-        final SagaProcess flow = sagaProcessRepository.findByOrderId(taskId);
+        final SagaProcess flow = sagaProcessRepository.findByOrderId(UUID.fromString(taskId));
 
         if (!isNotCanceled(flow)) {
             revertFlow(taskId);
@@ -85,7 +86,7 @@ public class SagaOrchestratorServiceImpl implements SagaService {
     @Transactional
     @Override
     public void cancelSaga(final String taskId) {
-        final SagaProcess flow = sagaProcessRepository.findByOrderId(taskId);
+        final SagaProcess flow = sagaProcessRepository.findByOrderId(UUID.fromString(taskId));
         if (flow == null) {
             throw new NotFoundException(taskId);
         }
@@ -123,7 +124,7 @@ public class SagaOrchestratorServiceImpl implements SagaService {
         Order order = null;
         try {
             final String taskId = result.getTaskId();
-            final SagaProcess flow = sagaProcessRepository.findByOrderId(taskId);
+            final SagaProcess flow = sagaProcessRepository.findByOrderId(UUID.fromString(taskId));
             order = flow.getOrder();
             revertFlow(taskId);
         } catch (Exception e) {
@@ -136,7 +137,7 @@ public class SagaOrchestratorServiceImpl implements SagaService {
     }
 
     private void revertFlow(final String taskId) {
-        final SagaProcess flow = sagaProcessRepository.findByOrderId(taskId);
+        final SagaProcess flow = sagaProcessRepository.findByOrderId(UUID.fromString(taskId));
         flow.getSteps().stream()
                 .filter(step -> !Objects.equals(step.getId(), flow.getActiveStepId()))
                 .forEach(step -> {
@@ -147,7 +148,7 @@ public class SagaOrchestratorServiceImpl implements SagaService {
 
     private void handleDoneStep(final ResultDto result) {
         final String taskId = result.getTaskId();
-        final SagaProcess flow = sagaProcessRepository.findByOrderId(taskId);
+        final SagaProcess flow = sagaProcessRepository.findByOrderId(UUID.fromString(taskId));
         final Optional<Step> nextStepOptional = getNextStep(flow);
         if (isNotCanceled(flow)) {
             submitNextStep(nextStepOptional, flow);
