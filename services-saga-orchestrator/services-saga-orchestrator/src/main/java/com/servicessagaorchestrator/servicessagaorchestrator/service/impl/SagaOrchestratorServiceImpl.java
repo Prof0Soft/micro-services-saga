@@ -72,8 +72,8 @@ public class SagaOrchestratorServiceImpl implements SagaService {
             return;
         }
 
-        final String taskId = result.getTaskId();
-        final SagaProcess flow = sagaProcessRepository.findByOrderId(UUID.fromString(taskId));
+        final UUID taskId = result.getTaskId();
+        final SagaProcess flow = sagaProcessRepository.findByOrderId(taskId);
 
         if (!isNotCanceled(flow)) {
             revertFlow(taskId);
@@ -88,14 +88,14 @@ public class SagaOrchestratorServiceImpl implements SagaService {
 
     @Transactional
     @Override
-    public void cancelSaga(final String taskId) {
-        final SagaProcess flow = sagaProcessRepository.findByOrderId(UUID.fromString(taskId));
+    public void cancelSaga(final UUID taskId) {
+        final SagaProcess flow = sagaProcessRepository.findByOrderId(taskId);
         if (flow == null) {
-            throw new NotFoundException(taskId);
+            throw new NotFoundException(taskId.toString());
         }
         final Order order = flow.getOrder();
         if (order.getStatus() != TaskStatus.RUNNING) {
-            throw new BadRequestException(taskId);
+            throw new BadRequestException(taskId.toString());
         }
         order.setStatus(TaskStatus.CANCELING);
         sagaProcessRepository.save(flow);
@@ -126,8 +126,8 @@ public class SagaOrchestratorServiceImpl implements SagaService {
     private void handleFailedStep(final ResultDto result) {
         Order order = null;
         try {
-            final String taskId = result.getTaskId();
-            final SagaProcess flow = sagaProcessRepository.findByOrderId(UUID.fromString(taskId));
+            final UUID taskId = result.getTaskId();
+            final SagaProcess flow = sagaProcessRepository.findByOrderId(taskId);
             order = flow.getOrder();
             revertFlow(taskId);
         } catch (Exception e) {
@@ -139,8 +139,8 @@ public class SagaOrchestratorServiceImpl implements SagaService {
         }
     }
 
-    private void revertFlow(final String taskId) {
-        final SagaProcess flow = sagaProcessRepository.findByOrderId(UUID.fromString(taskId));
+    private void revertFlow(final UUID taskId) {
+        final SagaProcess flow = sagaProcessRepository.findByOrderId(taskId);
         flow.getSteps().stream()
                 .filter(step -> !Objects.equals(step.getId(), flow.getActiveStepId()))
                 .forEach(step -> {
@@ -150,8 +150,8 @@ public class SagaOrchestratorServiceImpl implements SagaService {
     }
 
     private void handleDoneStep(final ResultDto result) {
-        final String taskId = result.getTaskId();
-        final SagaProcess flow = sagaProcessRepository.findByOrderId(UUID.fromString(taskId));
+        final UUID taskId = result.getTaskId();
+        final SagaProcess flow = sagaProcessRepository.findByOrderId(taskId);
         final Optional<Step> nextStepOptional = getNextStep(flow);
         if (isNotCanceled(flow)) {
             submitNextStep(nextStepOptional, flow);
@@ -172,14 +172,19 @@ public class SagaOrchestratorServiceImpl implements SagaService {
                 .findFirst();
     }
 
-    void submitRevert(final Optional<Step> previousStepOptional, final String taskId) {
+    void submitRevert(final Optional<Step> previousStepOptional, final UUID taskId) {
         previousStepOptional.ifPresent(step -> clients.get(step.getBookingFlow()).revertTask(taskId));
     }
 
     void submitNextStep(final Optional<Step> nextStepOptional, final SagaProcess flow) {
         if (nextStepOptional.isPresent()) {
             final StartProcessClientService startProcessClientService = clients.get(nextStepOptional.get().getBookingFlow());
-            startProcessClientService.createTask(flow.getOrder().getId().toString());
+
+            ResultDto resultDto = new ResultDto();
+            resultDto.setTaskId(flow.getOrder().getId());
+            resultDto.setServiceName("serviceNameStub");
+
+            startProcessClientService.createTask(resultDto);
             flow.setActiveStepId(nextStepOptional.get().getId());
         } else {
             final Order order = flow.getOrder();

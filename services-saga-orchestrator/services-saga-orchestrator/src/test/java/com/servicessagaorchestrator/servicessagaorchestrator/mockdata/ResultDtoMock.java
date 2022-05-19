@@ -15,7 +15,7 @@ public class ResultDtoMock {
         final ResultDto resultDto = new ResultDto();
         resultDto.setStatus(TaskStatus.CREATED);
         resultDto.setServiceName(BookingFlow.SERVICE_A.name());
-        resultDto.setTaskId(UUID.randomUUID().toString());
+        resultDto.setTaskId(UUID.randomUUID());
         return resultDto;
     }
 }
