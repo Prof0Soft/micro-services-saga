@@ -74,37 +74,47 @@ class SagaOrchestratorServiceImplTest {
 
     @Test
     void initSaga_successResult_nextStepIsPresent() {
+        //GIVEN
         when(mcAClient.createTask(ResultDtoMock.create())).thenReturn(TaskInfoMock.create());
 
+        //WHEN
         sagaService.initSaga(SagaProcessMock.create());
 
+        //THEN
         verify(sagaProcessRepository).save(any());
         verify(orderRepository).save(any());
     }
 
     @Test
     void initSaga_successResult_nextStepIsNotPresent() {
+        //GIVEN
         when(mcAClient.createTask(ResultDtoMock.create())).thenReturn(TaskInfoMock.create());
 
+        //WHEN
         sagaService.initSaga(SagaProcessMock.create(TaskStatus.RUNNING));
 
+        //THEN
         verify(sagaProcessRepository).save(any());
         verify(orderRepository).save(any());
     }
 
     @Test
     void initSaga_successResult_catchException() {
+        //GIVEN
         final SagaProcess sagaProcess = SagaProcessMock.create();
         sagaProcess.setOrder(null);
 
+        //THEN
         assertThrows(NullPointerException.class,
                 () -> {
+                    //WHEN
                     sagaService.initSaga(sagaProcess);
                 });
     }
 
     @Test
     void nextSagaStep_revertedStatusSuccess() {
+        //GIVEN
         final Logger logger = (Logger) LoggerFactory.getLogger(SagaOrchestratorServiceImpl.class);
         final ListAppender<ILoggingEvent> listAppender = new ListAppender<>();
         listAppender.start();
@@ -113,29 +123,37 @@ class SagaOrchestratorServiceImplTest {
 
         final ResultDto resultDto = ResultDtoMock.create();
         resultDto.setStatus(TaskStatus.REVERTED);
+
+        //WHEN
         sagaService.nextSagaStep(resultDto);
 
         final List<ILoggingEvent> logsList = listAppender.list;
 
+        //THEN
         assertEquals("Service: {} -> Task with id {} has been reverted.", logsList.get(0).getMessage());
         assertEquals(Level.INFO, logsList.get(0).getLevel());
     }
 
     @Test
     void nextSagaStep_doneStatusSuccess() {
+        //GIVEN
         final SagaProcess sagaProcess = SagaProcessMock.createLastStepFlow();
 
         when(sagaProcessRepository.findByOrderId(Mockito.any())).thenReturn(sagaProcess);
 
         final ResultDto resultDto = ResultDtoMock.create();
         resultDto.setStatus(TaskStatus.DONE);
+
+        //WHEN
         sagaService.nextSagaStep(resultDto);
 
+        //THEN
         verify(sagaProcessRepository, times(2)).save(any());
     }
 
     @Test
     void nextSagaStep_failedStatusSuccess() {
+        //GIVEN
         final SagaProcess sagaProcess = SagaProcessMock.createLastStepFlow();
         final UUID expectedId = sagaProcess.getOrder().getId();
 
@@ -143,12 +161,12 @@ class SagaOrchestratorServiceImplTest {
 
         final ResultDto resultDto = ResultDtoMock.create();
 
-
-        System.out.println(expectedId);
-
         resultDto.setStatus(TaskStatus.FAILED);
+
+        //WHEN
         sagaService.nextSagaStep(resultDto);
 
+        //THEN
         verify(mcAClient).revertTask(expectedId);
         verify(mcBClient).revertTask(expectedId);
     }
