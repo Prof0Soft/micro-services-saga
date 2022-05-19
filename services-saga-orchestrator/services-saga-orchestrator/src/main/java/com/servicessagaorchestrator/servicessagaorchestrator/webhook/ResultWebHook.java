@@ -2,6 +2,7 @@ package com.servicessagaorchestrator.servicessagaorchestrator.webhook;
 
 import com.servicessagaorchestrator.servicessagaorchestrator.dto.ResultDto;
 import com.servicessagaorchestrator.servicessagaorchestrator.service.SagaService;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -18,7 +19,8 @@ public class ResultWebHook {
     }
 
     @PostMapping("/result")
-    public void submitTaskResult(@RequestBody ResultDto result) {
+    public ResponseEntity<?> submitTaskResult(@RequestBody ResultDto result) {
         sagaService.nextSagaStep(result);
+        return ResponseEntity.ok().build();
     }
 }

@@ -55,7 +55,7 @@ public class SagaOrchestratorServiceImpl implements SagaService {
             final Order order = flow.getOrder();
             order.setStatus(TaskStatus.FAILED);
             orderRepository.save(order);
-            throw ex;
+//            throw ex;
         }
     }
 
