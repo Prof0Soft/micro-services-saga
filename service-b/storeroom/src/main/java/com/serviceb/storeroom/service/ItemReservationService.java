@@ -12,5 +12,5 @@ public interface ItemReservationService {
 
     ItemReservationDto create(ItemReservationDto order);
 
-    void removeOrderByTaskId(UUID taskId);
+    void removeByTaskId(UUID taskId);
 }

@@ -19,10 +19,10 @@ public class TaskSchedulerImpl implements TaskScheduler {
 
     private final ThreadPoolTaskExecutor schedulerExecutor;
     private final TaskRepository repository;
-    private final TaskExecutor taskExecutor;
+    private final TaskExecutorImpl taskExecutor;
 
     public TaskSchedulerImpl(final TaskRepository repository,
-                             final TaskExecutor taskExecutor) {
+                             final TaskExecutorImpl taskExecutor) {
         this.repository = repository;
         this.taskExecutor = taskExecutor;
         schedulerExecutor = new ThreadPoolTaskExecutor();

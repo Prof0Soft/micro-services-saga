@@ -5,9 +5,12 @@ import com.serviceb.storeroom.dto.ResultDto;
 import com.serviceb.storeroom.dto.TaskInfoDto;
 import com.serviceb.storeroom.dto.TaskStatusDto;
 import com.serviceb.storeroom.entity.Task;
+import com.serviceb.storeroom.exception.TaskNotFinishedException;
+import com.serviceb.storeroom.exception.TaskNotFoundException;
+import com.serviceb.storeroom.exception.TaskNotRunningException;
 import com.serviceb.storeroom.mapper.TaskMapper;
 import com.serviceb.storeroom.repository.TaskRepository;
-import com.serviceb.storeroom.service.OrderService;
+import com.serviceb.storeroom.service.ItemReservationService;
 import com.serviceb.storeroom.service.TaskService;
 import com.serviceb.storeroom.type.TaskStatus;
 import lombok.extern.slf4j.Slf4j;
@@ -24,14 +27,14 @@ import java.util.UUID;
 public class TaskServiceImpl implements TaskService {
     private final TaskRepository repository;
     private final TaskMapper mapper;
-    private final OrderService revert;
+    private final ItemReservationService itemReservationService;
 
     public TaskServiceImpl(final TaskRepository repository,
                            final TaskMapper mapper,
-                           final OrderService revert) {
+                           final ItemReservationService itemReservationService) {
         this.repository = repository;
         this.mapper = mapper;
-        this.revert = revert;
+        this.itemReservationService = itemReservationService;
     }
 
     @Transactional
@@ -56,7 +59,7 @@ public class TaskServiceImpl implements TaskService {
                 .map(mapper::toStatusDto)
                 .orElseThrow(() -> {
                     log.error("Task with id: {} not found", taskId);
-                    throw new NotFoundException(taskId.toString());
+                    throw new TaskNotFoundException(taskId);
                 });
     }
 
@@ -89,7 +92,7 @@ public class TaskServiceImpl implements TaskService {
                 log.error("Task with id: {} not done. Task: {}", task.getId(), task);
                 throw new TaskNotFinishedException(taskId);
             }
-            revert.removeOrderByTaskId(task.getId());
+            itemReservationService.removeByTaskId(task.getId());
 
             task = updateTaskStatusById(taskId, TaskStatus.REVERTED);
             log.info("Task {} reverted", task.getId());

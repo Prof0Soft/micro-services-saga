@@ -25,14 +25,14 @@ import java.util.UUID;
 public class TaskServiceImpl implements TaskService {
     private final TaskRepository repository;
     private final TaskMapper mapper;
-    private final OrderService revert;
+    private final OrderService orderService;
 
     public TaskServiceImpl(final TaskRepository repository,
                            final TaskMapper mapper,
-                           final OrderService revert) {
+                           final OrderService orderService) {
         this.repository = repository;
         this.mapper = mapper;
-        this.revert = revert;
+        this.orderService = orderService;
     }
 
     @Transactional
@@ -90,7 +90,7 @@ public class TaskServiceImpl implements TaskService {
                 log.error("Task with id: {} not done. Task: {}", task.getId(), task);
                 throw new TaskNotFinishedException(taskId);
             }
-            revert.removeOrderByTaskId(task.getId());
+            orderService.removeByTaskId(task.getId());
 
             task = updateTaskStatusById(taskId, TaskStatus.REVERTED);
             log.info("Task {} reverted", task.getId());

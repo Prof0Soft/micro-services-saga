@@ -5,6 +5,9 @@ import com.servicec.payment.dto.ResultDto;
 import com.servicec.payment.dto.TaskInfoDto;
 import com.servicec.payment.dto.TaskStatusDto;
 import com.servicec.payment.entity.Task;
+import com.servicec.payment.exception.TaskNotFinishedException;
+import com.servicec.payment.exception.TaskNotFoundException;
+import com.servicec.payment.exception.TaskNotRunningException;
 import com.servicec.payment.mapper.TaskMapper;
 import com.servicec.payment.repository.TaskRepository;
 import com.servicec.payment.service.PaymentService;
@@ -24,14 +27,14 @@ import java.util.UUID;
 public class TaskServiceImpl implements TaskService {
     private final TaskRepository repository;
     private final TaskMapper mapper;
-    private final PaymentService revert;
+    private final PaymentService paymentService;
 
     public TaskServiceImpl(final TaskRepository repository,
                            final TaskMapper mapper,
-                           final PaymentService revert) {
+                           final PaymentService paymentService) {
         this.repository = repository;
         this.mapper = mapper;
-        this.revert = revert;
+        this.paymentService = paymentService;
     }
 
     @Transactional
@@ -56,7 +59,7 @@ public class TaskServiceImpl implements TaskService {
                 .map(mapper::toStatusDto)
                 .orElseThrow(() -> {
                     log.error("Task with id: {} not found", taskId);
-                    throw new NotFoundException(taskId.toString());
+                    throw new TaskNotFoundException(taskId);
                 });
     }
 
@@ -89,7 +92,7 @@ public class TaskServiceImpl implements TaskService {
                 log.error("Task with id: {} not done. Task: {}", task.getId(), task);
                 throw new TaskNotFinishedException(taskId);
             }
-            revert.removeOrderByTaskId(task.getId());
+            paymentService.removeByTaskId(task.getId());
 
             task = updateTaskStatusById(taskId, TaskStatus.REVERTED);
             log.info("Task {} reverted", task.getId());

@@ -1,13 +1,14 @@
-package com.servicec.payment.service.impl;
+package com.serviceb.storeroom.service.impl;
 
-import com.servicec.payment.dto.PaymentDto;
-import com.servicec.payment.dto.ResultDto;
-import com.servicec.payment.dto.TaskStatusDto;
-import com.servicec.payment.entity.Task;
-import com.servicec.payment.service.PaymentService;
-import com.servicec.payment.service.SagaClientService;
-import com.servicec.payment.service.TaskService;
-import com.servicec.payment.type.TaskStatus;
+import com.serviceb.storeroom.dto.ItemReservationDto;
+import com.serviceb.storeroom.dto.ResultDto;
+import com.serviceb.storeroom.dto.TaskStatusDto;
+import com.serviceb.storeroom.entity.Task;
+import com.serviceb.storeroom.service.ItemReservationService;
+import com.serviceb.storeroom.service.SagaClientService;
+import com.serviceb.storeroom.service.TaskExecutor;
+import com.serviceb.storeroom.service.TaskService;
+import com.serviceb.storeroom.type.TaskStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -19,16 +20,16 @@ import java.util.UUID;
  */
 @Slf4j
 @Component
-public class TaskExecutor implements com.servicec.payment.service.TaskExecutor {
-    private final PaymentService paymentService;
+public class TaskExecutorImpl implements TaskExecutor {
+    private final ItemReservationService itemReservationService;
     private final TaskService taskService;
     private final SagaClientService sagaClientService;
     private final Random rand = new Random();
 
-    public TaskExecutor(final PaymentService paymentService,
-                        final TaskService taskService,
-                        final SagaClientService sagaClientService) {
-        this.paymentService = paymentService;
+    public TaskExecutorImpl(final ItemReservationService itemReservationService,
+                            final TaskService taskService,
+                            final SagaClientService sagaClientService) {
+        this.itemReservationService = itemReservationService;
         this.taskService = taskService;
         this.sagaClientService = sagaClientService;
     }
@@ -53,9 +54,9 @@ public class TaskExecutor implements com.servicec.payment.service.TaskExecutor {
                 }
             }
 
-            PaymentDto paymentDto = new PaymentDto();
-            paymentDto.setTaskId(task.getId());
-            paymentService.create(paymentDto);
+            ItemReservationDto orderDto = new ItemReservationDto();
+            orderDto.setTaskId(task.getId());
+            itemReservationService.create(orderDto);
 
             result = taskService.finishTask(task.getId());
         } catch (Exception e) {

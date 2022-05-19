@@ -1,13 +1,14 @@
-package com.serviceb.storeroom.service.impl;
+package com.servicec.payment.service.impl;
 
-import com.serviceb.storeroom.dto.OrderDto;
-import com.serviceb.storeroom.dto.ResultDto;
-import com.serviceb.storeroom.dto.TaskStatusDto;
-import com.serviceb.storeroom.entity.Task;
-import com.serviceb.storeroom.service.OrderService;
-import com.serviceb.storeroom.service.SagaClientService;
-import com.serviceb.storeroom.service.TaskService;
-import com.serviceb.storeroom.type.TaskStatus;
+import com.servicec.payment.dto.PaymentDto;
+import com.servicec.payment.dto.ResultDto;
+import com.servicec.payment.dto.TaskStatusDto;
+import com.servicec.payment.entity.Task;
+import com.servicec.payment.service.PaymentService;
+import com.servicec.payment.service.SagaClientService;
+import com.servicec.payment.service.TaskExecutor;
+import com.servicec.payment.service.TaskService;
+import com.servicec.payment.type.TaskStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Component;
 
@@ -19,16 +20,16 @@ import java.util.UUID;
  */
 @Slf4j
 @Component
-public class TaskExecutor implements com.serviceb.storeroom.service.TaskExecutor {
-    private final OrderService orderService;
+public class TaskExecutorImpl implements TaskExecutor {
+    private final PaymentService paymentService;
     private final TaskService taskService;
     private final SagaClientService sagaClientService;
     private final Random rand = new Random();
 
-    public TaskExecutor(final OrderService orderService,
-                        final TaskService taskService,
-                        final SagaClientService sagaClientService) {
-        this.orderService = orderService;
+    public TaskExecutorImpl(final PaymentService paymentService,
+                            final TaskService taskService,
+                            final SagaClientService sagaClientService) {
+        this.paymentService = paymentService;
         this.taskService = taskService;
         this.sagaClientService = sagaClientService;
     }
@@ -53,9 +54,9 @@ public class TaskExecutor implements com.serviceb.storeroom.service.TaskExecutor
                 }
             }
 
-            OrderDto orderDto = new OrderDto();
-            orderDto.setTaskId(task.getId());
-            orderService.create(orderDto);
+            PaymentDto paymentDto = new PaymentDto();
+            paymentDto.setTaskId(task.getId());
+            paymentService.create(paymentDto);
 
             result = taskService.finishTask(task.getId());
         } catch (Exception e) {

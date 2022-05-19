@@ -11,5 +11,5 @@ public interface OrderService {
 
     OrderDto create(OrderDto order);
 
-    void removeOrderByTaskId(UUID taskId);
+    void removeByTaskId(UUID taskId);
 }

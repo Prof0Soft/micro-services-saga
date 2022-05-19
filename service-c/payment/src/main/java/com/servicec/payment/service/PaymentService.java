@@ -11,5 +11,5 @@ public interface PaymentService {
 
     PaymentDto create(PaymentDto order);
 
-    void removeOrderByTaskId(UUID taskId);
+    void removeByTaskId(UUID taskId);
 }

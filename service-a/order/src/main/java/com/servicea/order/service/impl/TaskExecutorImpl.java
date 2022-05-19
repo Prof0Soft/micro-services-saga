@@ -6,6 +6,7 @@ import com.servicea.order.dto.TaskStatusDto;
 import com.servicea.order.entity.Task;
 import com.servicea.order.service.OrderService;
 import com.servicea.order.service.SagaClientService;
+import com.servicea.order.service.TaskExecutor;
 import com.servicea.order.service.TaskService;
 import com.servicea.order.type.TaskStatus;
 import lombok.extern.slf4j.Slf4j;
@@ -19,15 +20,15 @@ import java.util.UUID;
  */
 @Slf4j
 @Component
-public class TaskExecutor implements com.servicea.order.service.TaskExecutor {
+public class TaskExecutorImpl implements TaskExecutor {
     private final OrderService orderService;
     private final TaskService taskService;
     private final SagaClientService sagaClientService;
     private final Random rand = new Random();
 
-    public TaskExecutor(final OrderService orderService,
-                        final TaskService taskService,
-                        final SagaClientService sagaClientService) {
+    public TaskExecutorImpl(final OrderService orderService,
+                            final TaskService taskService,
+                            final SagaClientService sagaClientService) {
         this.orderService = orderService;
         this.taskService = taskService;
         this.sagaClientService = sagaClientService;
