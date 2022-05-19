@@ -1,5 +1,6 @@
 package com.servicea.servicea.service.impl;
 
+import com.servicea.servicea.dto.NewTaskDto;
 import com.servicea.servicea.dto.TaskInfoDto;
 import com.servicea.servicea.dto.TaskStatusDto;
 import com.servicea.servicea.entity.Task;
@@ -8,6 +9,7 @@ import com.servicea.servicea.exception.NotFoundException;
 import com.servicea.servicea.mapper.TaskMapper;
 import com.servicea.servicea.repository.TaskRepository;
 import com.servicea.servicea.service.Reverter;
+import com.servicea.servicea.service.SagaClientService;
 import com.servicea.servicea.service.TaskService;
 import com.servicea.servicea.type.TaskStatus;
 import lombok.extern.slf4j.Slf4j;
@@ -35,10 +37,10 @@ public class TaskServiceImpl implements TaskService {
 
     @Transactional
     @Override
-    public TaskInfoDto createTask(final String taskId, final String serviceName) {
+    public TaskInfoDto createTask(final NewTaskDto newTaskDto) {
         final Task task = new Task();
-        task.setId(UUID.fromString(taskId));
-        task.setServiceName(serviceName);
+        task.setId(newTaskDto.getTaskId());
+        task.setServiceName(newTaskDto.getServiceName());
 
         final Task savedTask = repository.save(task);
 
@@ -49,19 +51,19 @@ public class TaskServiceImpl implements TaskService {
     }
 
     @Override
-    public TaskStatusDto getTaskStatus(final String taskId) {
-        return repository.findById(UUID.fromString(taskId))
+    public TaskStatusDto getTaskStatus(final UUID taskId) {
+        return repository.findById(taskId)
                 .map(mapper::toStatusDto)
                 .orElseThrow(() -> {
                     log.error("Task with id: {} not found", taskId);
-                    throw new NotFoundException(taskId);
+                    throw new NotFoundException(taskId.toString());
                 });
     }
 
     @Transactional
     @Override
-    public TaskStatusDto cancelTask(final String taskId) {
-        return repository.findById(UUID.fromString(taskId))
+    public TaskStatusDto cancelTask(final UUID taskId) {
+        return repository.findById(taskId)
                 .map(task -> {
                     if (!task.getStatus().equals(TaskStatus.RUNNING)) {
                         log.error("Task with id: {} not running. Task: {}", task.getId(), task);
@@ -78,9 +80,9 @@ public class TaskServiceImpl implements TaskService {
 
     @Transactional
     @Override
-    public TaskStatusDto revertTask(final String taskId) {
+    public TaskStatusDto revertTask(final UUID taskId) {
         try {
-            Optional<Task> taskOptional = repository.findById(UUID.fromString(taskId));
+            Optional<Task> taskOptional = repository.findById(taskId);
             if (taskOptional.isEmpty()) {
                 log.error("Task with id: {} not found.", taskId);
                 throw new NotFoundException(taskId);
@@ -100,8 +102,8 @@ public class TaskServiceImpl implements TaskService {
         }
     }
 
-    private Task updateTaskStatus(final String taskId, final TaskStatus newStatus) {
-        return repository.findById(UUID.fromString(taskId)).map(task -> {
+    private Task updateTaskStatus(final UUID taskId, final TaskStatus newStatus) {
+        return repository.findById(taskId).map(task -> {
             task.setStatus(newStatus);
             return repository.save(task);
         }).orElseThrow(() -> new IllegalArgumentException("Can't update task status for task: " + taskId));
