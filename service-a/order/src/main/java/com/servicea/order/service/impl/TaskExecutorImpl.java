@@ -40,7 +40,6 @@ public class TaskExecutorImpl implements TaskExecutor {
         ResultDto result;
         try {
             if (isCancelled(task.getId())) {
-                cancelTask(task);
                 return;
             }
             for (int i = 0; i < 100; i += 10) {
@@ -62,11 +61,6 @@ public class TaskExecutorImpl implements TaskExecutor {
             result = taskService.failTask(task.getId());
         }
         sagaClientService.reply(result);
-    }
-
-    private void cancelTask(final Task task) {
-        log.info("Task with id: {} is cancelled", task.getId());
-        task.setStatus(TaskStatus.CREATED);
     }
 
     private boolean isCancelled(final UUID taskId) {
