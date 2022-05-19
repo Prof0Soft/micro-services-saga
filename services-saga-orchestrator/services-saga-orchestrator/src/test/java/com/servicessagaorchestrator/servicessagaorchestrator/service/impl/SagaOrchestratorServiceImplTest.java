@@ -136,15 +136,21 @@ class SagaOrchestratorServiceImplTest {
 
     @Test
     void nextSagaStep_failedStatusSuccess() {
-        final SagaProcess sagaProcess = SagaProcessMock.create(TaskStatus.FAILED);
+        final SagaProcess sagaProcess = SagaProcessMock.createLastStepFlow();
+        final UUID expectedId = sagaProcess.getOrder().getId();
 
         when(sagaProcessRepository.findByOrderId(Mockito.any())).thenReturn(sagaProcess);
 
         final ResultDto resultDto = ResultDtoMock.create();
+
+
+        System.out.println(expectedId);
+
         resultDto.setStatus(TaskStatus.FAILED);
         sagaService.nextSagaStep(resultDto);
 
-        verify(sagaProcessRepository).save(any());
+        verify(mcAClient).revertTask(expectedId);
+        verify(mcBClient).revertTask(expectedId);
     }
 
     @Test

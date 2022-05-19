@@ -146,18 +146,8 @@ public class SagaOrchestratorServiceImpl implements SagaService {
         }
     }
 
-    private void revertFlow(final UUID taskId) {
-        final SagaProcess flow = sagaProcessRepository.findByOrderId(taskId);
-        flow.getSteps().stream()
-                .filter(step -> !Objects.equals(step.getId(), flow.getActiveStepId()))
-                .forEach(step -> {
-                    final Optional<Step> previousStepOptional = getPreviousStep(flow);
-                    submitRevert(previousStepOptional, taskId);
-                });
-    }
-
     private void revertFlow(final SagaProcess flow) {
-        Optional<Step> previousStepOptional = getPreviousStep(flow);
+        final Optional<Step> previousStepOptional = getPreviousStep(flow);
         if (previousStepOptional.isPresent()) {
             flow.setActiveStepId(previousStepOptional.get().getId());
             revertFlow(flow);
@@ -189,7 +179,8 @@ public class SagaOrchestratorServiceImpl implements SagaService {
     }
 
     void submitRevert(final Optional<Step> previousStepOptional, final UUID taskId) {
-        previousStepOptional.ifPresent(step -> clients.get(step.getBookingFlow()).revertTask(taskId));
+        previousStepOptional.ifPresent(
+                step -> clients.get(step.getBookingFlow()).revertTask(taskId));
     }
 
     void submitNextStep(final Optional<Step> nextStepOptional, final SagaProcess flow) {
