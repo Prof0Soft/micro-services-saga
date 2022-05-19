@@ -1,5 +1,6 @@
 package com.servicea.servicea.mapper;
 
+import com.servicea.servicea.dto.ResultDto;
 import com.servicea.servicea.dto.TaskInfoDto;
 import com.servicea.servicea.dto.TaskStatusDto;
 import com.servicea.servicea.entity.Task;
@@ -11,9 +12,10 @@ import org.mapstruct.Mapping;
  */
 @Mapper
 public interface TaskMapper {
-    @Mapping(target = "id", expression = "java(task.getId().toString())")
-    TaskInfoDto toDto(Task task);
-    @Mapping(target = "id", expression = "java(task.getId().toString())")
+
+    ResultDto toResultDto(Task task);
+
+    TaskInfoDto toInfoDto(Task task);
     TaskStatusDto toStatusDto(Task task);
 
 }
