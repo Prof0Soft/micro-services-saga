@@ -93,7 +93,7 @@ public class SagaOrchestratorServiceImpl implements SagaService {
         if (order.getStatus() != TaskStatus.RUNNING) {
             throw new BadRequestException(taskId);
         }
-        order.setStatus(TaskStatus.CANCELED);
+        order.setStatus(TaskStatus.CANCELING);
         sagaProcessRepository.save(flow);
         Long activeStepId = flow.getActiveStepId();
         Optional<Step> activeStepOptional = flow.getSteps().stream()
@@ -106,7 +106,17 @@ public class SagaOrchestratorServiceImpl implements SagaService {
                 log.error("Error while canceling step {}", activeStepOptional.get(), ex);
             }
         }
-        revertFlow(taskId);
+        try {
+            revertFlow(taskId);
+            order.setStatus(TaskStatus.CANCELED);
+        } catch (Exception ex) {
+            log.error("Error while canceling saga {}", taskId, ex);
+            order.setStatus(TaskStatus.FAILED);
+
+        } finally {
+            sagaProcessRepository.save(flow);
+        }
+
     }
 
     private void handleFailedStep(final ResultDto result) {
@@ -152,7 +162,7 @@ public class SagaOrchestratorServiceImpl implements SagaService {
         final Long activeStepId = flow.getActiveStepId();
         final Step activeStep = flow.getSteps().stream()
                 .filter(step -> step.getId().equals(activeStepId))
-                .findFirst().orElseThrow(()-> new IllegalStateException("Active step not found"));
+                .findFirst().orElseThrow(() -> new IllegalStateException("Active step not found"));
         return flow.getSteps().stream()
                 .filter(step -> step.getFlowOrder() == activeStep.getFlowOrder() - STEP)
                 .findFirst();
@@ -180,7 +190,7 @@ public class SagaOrchestratorServiceImpl implements SagaService {
         final Long activeStepId = flow.getActiveStepId();
         final Step activeStep = flow.getSteps().stream()
                 .filter(step -> step.getId().equals(activeStepId))
-                .findFirst().orElseThrow(()-> new IllegalStateException("Active step not found"));
+                .findFirst().orElseThrow(() -> new IllegalStateException("Active step not found"));
 
         return flow.getSteps().stream()
                 .filter(step -> step.getFlowOrder() == activeStep.getFlowOrder() + 1)
