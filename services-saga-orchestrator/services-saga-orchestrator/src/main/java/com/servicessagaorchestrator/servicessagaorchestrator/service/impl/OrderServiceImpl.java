@@ -4,14 +4,14 @@ import com.servicessagaorchestrator.servicessagaorchestrator.dto.OrderDto;
 import com.servicessagaorchestrator.servicessagaorchestrator.dto.OrderStatusDto;
 import com.servicessagaorchestrator.servicessagaorchestrator.entity.Order;
 import com.servicessagaorchestrator.servicessagaorchestrator.entity.SagaProcess;
+import com.servicessagaorchestrator.servicessagaorchestrator.enums.BookingFlow;
+import com.servicessagaorchestrator.servicessagaorchestrator.enums.TaskStatus;
 import com.servicessagaorchestrator.servicessagaorchestrator.exception.NotFoundException;
 import com.servicessagaorchestrator.servicessagaorchestrator.mapper.OrderMapper;
 import com.servicessagaorchestrator.servicessagaorchestrator.repository.OrderRepository;
 import com.servicessagaorchestrator.servicessagaorchestrator.repository.SagaProcessRepository;
 import com.servicessagaorchestrator.servicessagaorchestrator.service.OrderService;
 import com.servicessagaorchestrator.servicessagaorchestrator.service.SagaService;
-import com.servicessagaorchestrator.servicessagaorchestrator.enums.BookingFlow;
-import com.servicessagaorchestrator.servicessagaorchestrator.enums.TaskStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -65,6 +65,7 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderStatusDto cancelOrder(final String id) {
-        return null;
+        sagaService.cancelSaga(id);
+        return getOrderStatus(id);
     }
 }

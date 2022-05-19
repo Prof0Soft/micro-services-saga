@@ -93,9 +93,20 @@ public class SagaOrchestratorServiceImpl implements SagaService {
         if (order.getStatus() != TaskStatus.RUNNING) {
             throw new BadRequestException(taskId);
         }
-
         order.setStatus(TaskStatus.CANCELED);
         sagaProcessRepository.save(flow);
+        Long activeStepId = flow.getActiveStepId();
+        Optional<Step> activeStepOptional = flow.getSteps().stream()
+                .filter(step -> step.getId() > activeStepId).findFirst();
+
+        if (activeStepOptional.isPresent()) {
+            try {
+                clients.get(activeStepOptional.get().getBookingFlow()).cancelTask(taskId);
+            } catch (Exception ex) {
+                log.error("Error while canceling step {}", activeStepOptional.get(), ex);
+            }
+        }
+        revertFlow(taskId);
     }
 
     private void handleFailedStep(final ResultDto result) {
