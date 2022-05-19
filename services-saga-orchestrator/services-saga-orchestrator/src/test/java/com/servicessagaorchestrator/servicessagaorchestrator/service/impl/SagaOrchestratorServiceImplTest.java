@@ -5,7 +5,11 @@ import ch.qos.logback.classic.Logger;
 import ch.qos.logback.classic.spi.ILoggingEvent;
 import ch.qos.logback.core.read.ListAppender;
 import com.servicessagaorchestrator.servicessagaorchestrator.dto.ResultDto;
+import com.servicessagaorchestrator.servicessagaorchestrator.dto.TaskStatusDto;
+import com.servicessagaorchestrator.servicessagaorchestrator.entity.Order;
 import com.servicessagaorchestrator.servicessagaorchestrator.entity.SagaProcess;
+import com.servicessagaorchestrator.servicessagaorchestrator.entity.Step;
+import com.servicessagaorchestrator.servicessagaorchestrator.enums.BookingFlow;
 import com.servicessagaorchestrator.servicessagaorchestrator.enums.TaskStatus;
 import com.servicessagaorchestrator.servicessagaorchestrator.mockdata.ResultDtoMock;
 import com.servicessagaorchestrator.servicessagaorchestrator.mockdata.SagaProcessMock;
@@ -30,6 +34,7 @@ import org.springframework.data.auditing.AuditingHandler;
 import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 
 import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -110,10 +115,8 @@ class SagaOrchestratorServiceImplTest {
 
         final List<ILoggingEvent> logsList = listAppender.list;
 
-        assertEquals("Service: {} -> Task with id {} has been reverted.", logsList.get(0)
-                .getMessage());
-        assertEquals(Level.INFO, logsList.get(0)
-                .getLevel());
+        assertEquals("Service: {} -> Task with id {} has been reverted.", logsList.get(0).getMessage());
+        assertEquals(Level.INFO, logsList.get(0).getLevel());
     }
 
     @Test
@@ -143,7 +146,33 @@ class SagaOrchestratorServiceImplTest {
     }
 
     @Test
-    void cancelSaga() {
+    void cancelSaga_Success() {
+        //GIVEN
+        String taskId = "23e4567-e89b-12d3-a456-426614174000";
+        UUID id = UUID.fromString(taskId);
+
+        List<Step> steps = BookingFlow.buildFlow();
+        steps.get(0).setId(1L);
+        steps.get(1).setId(2L);
+        steps.get(2).setId(3L);
+
+        Order order = new Order();
+        order.setId(id);
+        order.setStatus(TaskStatus.RUNNING);
+        SagaProcess flow = new SagaProcess();
+        flow.setSteps(steps);
+        flow.setActiveStepId(2L);
+        flow.setId(1L);
+        flow.setOrder(order);
+
+        when(sagaProcessRepository.findByOrderId(UUID.fromString(taskId))).thenReturn(flow);
+        when(mcBClient.cancelTask(taskId)).thenReturn(new TaskStatusDto());
+        sagaService.cancelSaga(taskId);
+
+        verify(sagaProcessRepository, times(2)).save(any());
+        verify(mcBClient).cancelTask(taskId);
+        verify(mcAClient, times(2)).revertTask(taskId);
+
     }
 
     @Test
