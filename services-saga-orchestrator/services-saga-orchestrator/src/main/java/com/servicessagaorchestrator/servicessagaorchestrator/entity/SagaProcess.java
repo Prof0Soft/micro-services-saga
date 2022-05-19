@@ -34,10 +34,6 @@ public class SagaProcess {
     @JoinColumn(name = "order_id")
     private Order order;
 
-    @Column(name = "status")
-    @Enumerated(EnumType.STRING)
-    private TaskStatus status;
-
     @Column(name = "active_step_id")
     private Long activeStepId;
 

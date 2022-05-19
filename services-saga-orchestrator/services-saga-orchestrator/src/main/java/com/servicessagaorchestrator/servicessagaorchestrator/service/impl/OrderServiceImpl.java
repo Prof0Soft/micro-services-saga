@@ -42,8 +42,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDto createOrder() {
         final Order orderEntity = new Order();
+        orderEntity.setStatus(TaskStatus.NEW);
         final SagaProcess sagaProcess = new SagaProcess();
-        sagaProcess.setStatus(TaskStatus.NEW);
         sagaProcess.setOrder(orderEntity);
         sagaProcess.setSteps(BookingFlow.buildFlow());
 

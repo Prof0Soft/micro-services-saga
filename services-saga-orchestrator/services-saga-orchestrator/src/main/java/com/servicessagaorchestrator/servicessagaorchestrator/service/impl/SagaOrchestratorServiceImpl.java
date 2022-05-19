@@ -49,6 +49,7 @@ public class SagaOrchestratorServiceImpl implements SagaService {
             submitNextStep(nextStepOptional, flow);
             final Order order = flow.getOrder();
             order.setStatus(TaskStatus.RUNNING);
+            sagaProcessRepository.save(flow);
             orderRepository.save(order);
         } catch (Exception ex) {
             final Order order = flow.getOrder();
@@ -58,6 +59,7 @@ public class SagaOrchestratorServiceImpl implements SagaService {
         }
     }
 
+    @Transactional
     @Override
     public void nextSagaStep(final ResultDto result) {
         if (result.getStatus() == TaskStatus.REVERTED) {
@@ -81,6 +83,7 @@ public class SagaOrchestratorServiceImpl implements SagaService {
         if (result.getStatus().equals(TaskStatus.DONE)) {
             handleDoneStep(result);
         }
+        sagaProcessRepository.save(flow);
     }
 
     @Transactional
@@ -179,7 +182,6 @@ public class SagaOrchestratorServiceImpl implements SagaService {
             startProcessClientService.createTask(flow.getOrder().getId().toString());
             flow.setActiveStepId(nextStepOptional.get().getId());
         } else {
-            flow.setStatus(TaskStatus.DONE);
             final Order order = flow.getOrder();
             order.setStatus(TaskStatus.DONE);
             orderRepository.save(order);
@@ -188,7 +190,7 @@ public class SagaOrchestratorServiceImpl implements SagaService {
     }
 
     private Optional<Step> getNextStep(final SagaProcess flow) {
-        if (flow.getStatus() == TaskStatus.NEW) {
+        if (flow.getOrder().getStatus() == TaskStatus.NEW) {
             return flow.getSteps().stream()
                     .filter(step -> step.getFlowOrder().equals(FIRST_STEP))
                     .findFirst();
