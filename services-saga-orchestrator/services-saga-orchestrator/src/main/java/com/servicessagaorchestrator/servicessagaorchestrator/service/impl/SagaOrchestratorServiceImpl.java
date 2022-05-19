@@ -150,12 +150,11 @@ public class SagaOrchestratorServiceImpl implements SagaService {
 
     private Optional<Step> getPreviousStep(final SagaProcess flow) {
         final Long activeStepId = flow.getActiveStepId();
-        final Optional<Step> activeStep = flow.getSteps().stream().filter(step -> step.getId().equals(activeStepId)).findFirst();
-        if (activeStep.isEmpty()) {
-            throw new IllegalStateException("Active step not found");
-        }
+        final Step activeStep = flow.getSteps().stream()
+                .filter(step -> step.getId().equals(activeStepId))
+                .findFirst().orElseThrow(()-> new IllegalStateException("Active step not found"));
         return flow.getSteps().stream()
-                .filter(step -> step.getFlowOrder() == activeStep.get().getFlowOrder() - STEP)
+                .filter(step -> step.getFlowOrder() == activeStep.getFlowOrder() - STEP)
                 .findFirst();
     }
 
@@ -181,7 +180,7 @@ public class SagaOrchestratorServiceImpl implements SagaService {
         final Long activeStepId = flow.getActiveStepId();
         final Step activeStep = flow.getSteps().stream()
                 .filter(step -> step.getId().equals(activeStepId))
-                .findFirst().orElseThrow();
+                .findFirst().orElseThrow(()-> new IllegalStateException("Active step not found"));
 
         return flow.getSteps().stream()
                 .filter(step -> step.getFlowOrder() == activeStep.getFlowOrder() + 1)
