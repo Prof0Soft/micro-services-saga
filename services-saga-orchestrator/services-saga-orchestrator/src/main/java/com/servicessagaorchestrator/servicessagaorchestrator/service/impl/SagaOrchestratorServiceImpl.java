@@ -202,7 +202,7 @@ public class SagaOrchestratorServiceImpl implements SagaService {
                 .findFirst().orElseThrow(() -> new IllegalStateException("Active step not found"));
 
         return flow.getSteps().stream()
-                .filter(step -> step.getFlowOrder() == activeStep.getFlowOrder() + 1)
+                .filter(step -> step.getFlowOrder() == activeStep.getFlowOrder() + STEP)
                 .findFirst();
     }
 }
