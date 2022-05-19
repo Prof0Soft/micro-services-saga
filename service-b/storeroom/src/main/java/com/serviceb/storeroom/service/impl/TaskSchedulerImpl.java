@@ -3,6 +3,7 @@ package com.serviceb.storeroom.service.impl;
 import com.serviceb.storeroom.repository.TaskRepository;
 import com.serviceb.storeroom.service.TaskExecutor;
 import com.serviceb.storeroom.service.TaskScheduler;
+import com.serviceb.storeroom.service.TaskService;
 import com.serviceb.storeroom.type.TaskStatus;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -21,11 +22,14 @@ public class TaskSchedulerImpl implements TaskScheduler {
     private final ThreadPoolTaskExecutor schedulerExecutor;
     private final TaskRepository repository;
     private final TaskExecutor taskExecutor;
+    private final TaskService taskService;
 
     public TaskSchedulerImpl(final TaskRepository repository,
-                             final TaskExecutor taskExecutor) {
+                             final TaskExecutor taskExecutor,
+                             final TaskService taskService) {
         this.repository = repository;
         this.taskExecutor = taskExecutor;
+        this.taskService = taskService;
         schedulerExecutor = new ThreadPoolTaskExecutor();
         schedulerExecutor.setThreadNamePrefix("scheduler-pool");
         schedulerExecutor.setMaxPoolSize(4);
@@ -44,6 +48,7 @@ public class TaskSchedulerImpl implements TaskScheduler {
         repository.findByStatus(TaskStatus.CREATED).forEach(task -> {
             log.info("Task {} is scheduled for execution", task.getId());
             log.debug("Task {} is scheduled for execution", task);
+            taskService.runTask(task.getId());
             schedulerExecutor.execute(() -> {
                 taskExecutor.execute(task);
             });

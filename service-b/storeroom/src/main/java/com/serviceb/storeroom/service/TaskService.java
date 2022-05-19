@@ -19,6 +19,8 @@ public interface TaskService {
 
     TaskStatusDto revertTask(UUID taskId);
 
+    ResultDto runTask(final UUID taskId);
+
     ResultDto finishTask(final UUID taskId);
 
     ResultDto failTask(final UUID taskId);

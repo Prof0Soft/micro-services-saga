@@ -43,10 +43,9 @@ public class TaskExecutorImpl implements TaskExecutor {
                 cancelTask(task);
                 return;
             }
-
             for (int i = 0; i < 100; i += 10) {
                 log.info("Task processing..." + i + "%");
-                Thread.sleep(2000L);
+                Thread.sleep(1000L);
 
                 if (rand.nextInt(100) + 1 < 5) {
                     // imitation of an exceptional situation
