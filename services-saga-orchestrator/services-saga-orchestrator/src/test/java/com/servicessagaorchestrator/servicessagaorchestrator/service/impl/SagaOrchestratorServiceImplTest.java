@@ -204,11 +204,4 @@ class SagaOrchestratorServiceImplTest {
         assertThrows(BadRequestException.class, () -> sagaService.cancelSaga(id));
     }
 
-    @Test
-    void submitRevert() {
-    }
-
-    @Test
-    void submitNextStep() {
-    }
 }
