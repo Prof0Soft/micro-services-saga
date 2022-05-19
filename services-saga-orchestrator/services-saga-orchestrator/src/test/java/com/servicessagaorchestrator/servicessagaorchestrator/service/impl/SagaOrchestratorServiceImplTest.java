@@ -171,7 +171,7 @@ class SagaOrchestratorServiceImplTest {
 
         verify(sagaProcessRepository, times(2)).save(any());
         verify(mcBClient).cancelTask(id);
-        verify(mcAClient, times(2)).revertTask(id);
+        verify(mcAClient).revertTask(id);
 
     }
 

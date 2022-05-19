@@ -76,7 +76,7 @@ public class SagaOrchestratorServiceImpl implements SagaService {
         final SagaProcess flow = sagaProcessRepository.findByOrderId(taskId);
 
         if (!isNotCanceled(flow)) {
-            revertFlow(taskId);
+            revertFlow(flow);
             return;
         }
 
@@ -118,7 +118,7 @@ public class SagaOrchestratorServiceImpl implements SagaService {
             }
         }
         try {
-            revertFlow(taskId);
+            revertFlow(flow);
             order.setStatus(TaskStatus.CANCELED);
         } catch (Exception ex) {
             log.error("Error while canceling saga {}", taskId, ex);
@@ -136,7 +136,7 @@ public class SagaOrchestratorServiceImpl implements SagaService {
             final UUID taskId = result.getTaskId();
             final SagaProcess flow = sagaProcessRepository.findByOrderId(taskId);
             order = flow.getOrder();
-            revertFlow(taskId);
+            revertFlow(flow);
         } catch (Exception e) {
             if (order != null) {
                 order.setStatus(TaskStatus.FAILED);
@@ -154,6 +154,15 @@ public class SagaOrchestratorServiceImpl implements SagaService {
                     final Optional<Step> previousStepOptional = getPreviousStep(flow);
                     submitRevert(previousStepOptional, taskId);
                 });
+    }
+
+    private void revertFlow(final SagaProcess flow) {
+        Optional<Step> previousStepOptional = getPreviousStep(flow);
+        if (previousStepOptional.isPresent()) {
+            flow.setActiveStepId(previousStepOptional.get().getId());
+            revertFlow(flow);
+        }
+        submitRevert(previousStepOptional, flow.getOrder().getId());
     }
 
     private void handleDoneStep(final ResultDto result) {
