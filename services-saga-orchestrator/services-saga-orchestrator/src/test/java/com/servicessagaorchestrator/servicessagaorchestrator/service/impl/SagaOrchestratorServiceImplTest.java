@@ -20,8 +20,14 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceAutoConfiguration;
+import org.springframework.boot.autoconfigure.jdbc.DataSourceTransactionManagerAutoConfiguration;
+import org.springframework.boot.autoconfigure.orm.jpa.HibernateJpaAutoConfiguration;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.auditing.AuditingHandler;
+import org.springframework.data.jpa.mapping.JpaMetamodelMappingContext;
 
 import java.util.List;
 
@@ -36,7 +42,10 @@ import static org.mockito.Mockito.when;
  * @author Sergey B.
  * 19.05.2022
  */
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.MOCK)
+@SpringBootTest
+@EnableAutoConfiguration(exclude = {DataSourceAutoConfiguration.class,
+        DataSourceTransactionManagerAutoConfiguration.class,
+        HibernateJpaAutoConfiguration.class})
 class SagaOrchestratorServiceImplTest {
 
     @Autowired
@@ -51,6 +60,10 @@ class SagaOrchestratorServiceImplTest {
     private SagaProcessRepository sagaProcessRepository;
     @MockBean
     private OrderRepository orderRepository;
+    @MockBean
+    private AuditingHandler auditingHandler;
+    @MockBean
+    private JpaMetamodelMappingContext jpaMetamodelMappingContext;
 
     @Test
     void initSaga_successResult_nextStepIsPresent() {
