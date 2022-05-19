@@ -56,13 +56,14 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public OrderStatusDto getOrderStatus(final String id) {
-        Optional<Order> optionalOrder = orderRepository.findById(UUID.fromString(id));
+        final Optional<Order> optionalOrder = orderRepository.findById(UUID.fromString(id));
         if (optionalOrder.isEmpty()) {
             throw new NotFoundException(id);
         }
         return orderMapper.toStatusDto(optionalOrder.get());
     }
 
+    @Transactional
     @Override
     public OrderStatusDto cancelOrder(final String id) {
         sagaService.cancelSaga(id);
