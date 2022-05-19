@@ -11,6 +11,8 @@ import com.servicessagaorchestrator.servicessagaorchestrator.entity.SagaProcess;
 import com.servicessagaorchestrator.servicessagaorchestrator.entity.Step;
 import com.servicessagaorchestrator.servicessagaorchestrator.enums.BookingFlow;
 import com.servicessagaorchestrator.servicessagaorchestrator.enums.TaskStatus;
+import com.servicessagaorchestrator.servicessagaorchestrator.exception.BadRequestException;
+import com.servicessagaorchestrator.servicessagaorchestrator.exception.NotFoundException;
 import com.servicessagaorchestrator.servicessagaorchestrator.mockdata.ResultDtoMock;
 import com.servicessagaorchestrator.servicessagaorchestrator.mockdata.SagaProcessMock;
 import com.servicessagaorchestrator.servicessagaorchestrator.mockdata.TaskInfoMock;
@@ -173,6 +175,33 @@ class SagaOrchestratorServiceImplTest {
         verify(mcBClient).cancelTask(id);
         verify(mcAClient).revertTask(id);
 
+    }
+
+    @Test
+    void cancelSaga_NotFound() {
+        String taskId = "23e4567-e89b-12d3-a456-426614174000";
+        UUID id = UUID.fromString(taskId);
+
+        when(sagaProcessRepository.findByOrderId(UUID.fromString(taskId))).thenReturn(null);
+        assertThrows(NotFoundException.class, () -> sagaService.cancelSaga(id));
+    }
+
+    @Test
+    void cancelSaga_BadRequest() {
+        String taskId = "23e4567-e89b-12d3-a456-426614174000";
+        UUID id = UUID.fromString(taskId);
+
+        Order order = new Order();
+        order.setId(id);
+        order.setStatus(TaskStatus.DONE);
+        SagaProcess flow = new SagaProcess();
+        flow.setActiveStepId(2L);
+        flow.setId(1L);
+        flow.setOrder(order);
+
+        when(sagaProcessRepository.findByOrderId(UUID.fromString(taskId))).thenReturn(flow);
+
+        assertThrows(BadRequestException.class, () -> sagaService.cancelSaga(id));
     }
 
     @Test
