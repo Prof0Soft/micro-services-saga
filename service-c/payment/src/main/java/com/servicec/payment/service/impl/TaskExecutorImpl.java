@@ -46,9 +46,8 @@ public class TaskExecutorImpl implements TaskExecutor {
                 log.info("Task processing..." + i + "%");
                 Thread.sleep(1000L);
 
-                if (rand.nextInt(100) + 1 < 5) {
-                    // imitation of an exceptional situation
-                    throw new IllegalArgumentException();
+                if (rand.nextInt(100) + 1 < 2) {
+                    throw new IllegalArgumentException("imitation of an exceptional situation");
                 }
             }
 

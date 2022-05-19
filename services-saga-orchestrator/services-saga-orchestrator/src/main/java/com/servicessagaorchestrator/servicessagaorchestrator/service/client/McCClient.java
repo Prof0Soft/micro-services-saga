@@ -21,12 +21,12 @@ public interface McCClient extends StartProcessClientService {
     @PostMapping("/tasks")
     TaskInfoDto createTask(@RequestBody ResultDto taskId);
 
-    @GetMapping("/{taskId}/status")
+    @GetMapping("/tasks/{taskId}/status")
     TaskStatusDto getTaskStatus(@PathVariable final UUID taskId);
 
-    @PostMapping("/{taskId}/cancel")
+    @PostMapping("/tasks/{taskId}/cancel")
     TaskStatusDto cancelTask(@PathVariable final UUID taskId);
 
-    @PostMapping("/{taskId}/revert")
+    @PostMapping("/tasks/{taskId}/revert")
     TaskStatusDto revertTask(@PathVariable final UUID taskId);
 }
