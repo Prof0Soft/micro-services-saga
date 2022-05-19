@@ -173,11 +173,17 @@ public class SagaOrchestratorServiceImpl implements SagaService {
     }
 
     void submitNextStep(final Optional<Step> nextStepOptional, final SagaProcess flow) {
-        nextStepOptional.ifPresent(step -> {
-            final StartProcessClientService startProcessClientService = clients.get(step.getBookingFlow());
+        if (nextStepOptional.isPresent()) {
+            final StartProcessClientService startProcessClientService = clients.get(nextStepOptional.get().getBookingFlow());
             startProcessClientService.createTask(flow.getOrder().getId().toString());
-            flow.setActiveStepId(step.getId());
-        });
+            flow.setActiveStepId(nextStepOptional.get().getId());
+        } else {
+            flow.setStatus(TaskStatus.DONE);
+            final Order order = flow.getOrder();
+            order.setStatus(TaskStatus.DONE);
+            orderRepository.save(order);
+            sagaProcessRepository.save(flow);
+        }
     }
 
     private Optional<Step> getNextStep(final SagaProcess flow) {
