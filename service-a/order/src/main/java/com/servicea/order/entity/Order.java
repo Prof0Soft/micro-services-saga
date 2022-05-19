@@ -17,7 +17,7 @@ import javax.persistence.Table;
 @Getter
 @Setter
 @Entity
-@Table(name="Order")
+@Table(name="\"Order\"")
 public class Order extends AbstractEntity {
     @Id
     @GeneratedValue

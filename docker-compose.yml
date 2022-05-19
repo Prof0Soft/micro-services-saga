@@ -1,0 +1,30 @@
+version: '3.1'
+
+services:
+  db-a:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: servicea
+      POSTGRES_USER: servicea
+      POSTGRES_PASSWORD: servicea
+    ports:
+      - "5433:5432"
+  db-b:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: serviceb
+      POSTGRES_USER: serviceb
+      POSTGRES_PASSWORD: serviceb
+    ports:
+      - "5434:5432"
+  db-c:
+    image: postgres
+    restart: always
+    environment:
+      POSTGRES_DB: servicec
+      POSTGRES_USER: servicec
+      POSTGRES_PASSWORD: servicec
+    ports:
+      - "5435:5432"

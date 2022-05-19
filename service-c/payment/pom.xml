@@ -9,7 +9,7 @@
         <relativePath/> <!-- lookup parent from repository -->
     </parent>
     <groupId>com.service-c</groupId>
-    <artifactId>customer</artifactId>
+    <artifactId>payment</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>service-c</name>
     <description>service-c</description>
