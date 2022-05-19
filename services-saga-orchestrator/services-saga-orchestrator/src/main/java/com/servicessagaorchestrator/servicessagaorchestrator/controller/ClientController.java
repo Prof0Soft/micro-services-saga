@@ -9,6 +9,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.UUID;
+
 /**
  * @author Sergey B.
  * 18.05.2022
@@ -34,12 +36,12 @@ public class ClientController {
     }
 
     @GetMapping("/{id}/status")
-    public OrderStatusDto getOrderStatus(@PathVariable final String id) {
+    public OrderStatusDto getOrderStatus(@PathVariable final UUID id) {
         return service.getOrderStatus(id);
     }
 
     @PostMapping("/{id}/cancel")
-    public OrderStatusDto cancelOrder(@PathVariable final String id) {
+    public OrderStatusDto cancelOrder(@PathVariable final UUID id) {
         return service.cancelOrder(id);
     }
 

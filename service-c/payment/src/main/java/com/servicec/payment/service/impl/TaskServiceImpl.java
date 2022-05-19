@@ -5,6 +5,7 @@ import com.servicec.payment.dto.ResultDto;
 import com.servicec.payment.dto.TaskInfoDto;
 import com.servicec.payment.dto.TaskStatusDto;
 import com.servicec.payment.entity.Task;
+import com.servicec.payment.exception.TaskAlreadyProcessedException;
 import com.servicec.payment.exception.TaskNotFinishedException;
 import com.servicec.payment.exception.TaskNotFoundException;
 import com.servicec.payment.exception.TaskNotRunningException;
@@ -107,11 +108,25 @@ public class TaskServiceImpl implements TaskService {
 
     @Transactional
     @Override
+    public ResultDto runTask(final UUID taskId) {
+        TaskStatusDto taskStatus = getTaskStatus(taskId);
+        if (TaskStatus.CREATED != taskStatus.getStatus()) {
+            throw new TaskAlreadyProcessedException(taskId);
+        }
+
+        Task task = updateTaskStatusById(taskId, TaskStatus.RUNNING);
+        return mapper.toResultDto(task);
+    }
+
+    @Transactional
+    @Override
     public ResultDto finishTask(final UUID taskId) {
-        Task task = updateTaskStatusById(taskId, TaskStatus.DONE);
-        if (task.getStatus() != TaskStatus.RUNNING) {
+        TaskStatusDto taskStatus = getTaskStatus(taskId);
+        if (TaskStatus.RUNNING != taskStatus.getStatus()) {
             throw new TaskNotRunningException(taskId);
         }
+
+        Task task = updateTaskStatusById(taskId, TaskStatus.DONE);
         return mapper.toResultDto(task);
     }
 
