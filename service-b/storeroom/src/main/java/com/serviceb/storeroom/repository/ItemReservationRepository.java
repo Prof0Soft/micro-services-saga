@@ -13,5 +13,5 @@ import java.util.UUID;
 @Repository
 public interface ItemReservationRepository extends JpaRepository<ItemReservation, UUID> {
     @Modifying
-    boolean removeByTaskId(UUID taskId);
+    void removeByTaskId(UUID taskId);
 }

@@ -14,5 +14,5 @@ import java.util.UUID;
 public interface OrderRepository extends JpaRepository<Order, UUID> {
 
     @Modifying
-    boolean removeByTaskId(UUID taskId);
+    void removeByTaskId(UUID taskId);
 }
