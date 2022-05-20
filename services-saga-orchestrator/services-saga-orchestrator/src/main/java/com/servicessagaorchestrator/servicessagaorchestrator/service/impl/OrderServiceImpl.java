@@ -42,7 +42,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public OrderDto createOrder() {
         final Order orderEntity = new Order();
-        orderEntity.setId(UUID.randomUUID());
         orderEntity.setStatus(TaskStatus.NEW);
         final SagaProcess sagaProcess = new SagaProcess();
         sagaProcess.setOrder(orderEntity);
