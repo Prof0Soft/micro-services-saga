@@ -85,7 +85,7 @@ public class SagaOrchestratorServiceImpl implements SagaService {
             return;
         }
 
-        if (result.getStatus().equals(TaskStatus.FAILED)) {
+        if (result.getStatus() == TaskStatus.FAILED) {
             log.info("Status");
             handleFailedStep(result);
             return;
@@ -99,7 +99,7 @@ public class SagaOrchestratorServiceImpl implements SagaService {
             return;
         }
 
-        if (result.getStatus().equals(TaskStatus.DONE)) {
+        if (result.getStatus() == TaskStatus.DONE) {
             handleDoneStep(result);
         }
 
@@ -183,6 +183,7 @@ public class SagaOrchestratorServiceImpl implements SagaService {
             final SagaProcess flow = sagaProcessRepository.findByOrderId(taskId);
             order = flow.getOrder();
             revertFlow(flow);
+            order.setStatus(TaskStatus.FAILED);
         } catch (Exception e) {
             if (order != null) {
                 log.error("Can't handle filed step. The order is null.");
