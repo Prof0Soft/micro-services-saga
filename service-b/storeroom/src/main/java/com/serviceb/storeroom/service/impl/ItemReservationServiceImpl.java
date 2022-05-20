@@ -44,6 +44,6 @@ public class ItemReservationServiceImpl implements ItemReservationService {
     @Transactional
     @Override
     public void removeByTaskId(final UUID taskId) {
-        itemReservationRepository.removeOrderByAndTaskId(taskId);
+        itemReservationRepository.removeByTaskId(taskId);
     }
 }

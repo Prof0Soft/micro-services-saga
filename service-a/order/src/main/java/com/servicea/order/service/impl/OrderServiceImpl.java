@@ -43,6 +43,6 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     @Override
     public void removeByTaskId(final UUID taskId) {
-        orderRepository.removeOrderByAndTaskId(taskId);
+        orderRepository.removeByTaskId(taskId);
     }
 }

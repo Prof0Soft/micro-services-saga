@@ -11,7 +11,7 @@ import java.util.UUID;
  * @author M.Bezmen
  */
 @Repository
-public interface ItemReservationRepository extends JpaRepository<ItemReservation, Long> {
+public interface ItemReservationRepository extends JpaRepository<ItemReservation, UUID> {
     @Modifying
-    boolean removeOrderByAndTaskId(UUID taskId);
+    boolean removeByTaskId(UUID taskId);
 }

@@ -43,6 +43,6 @@ public class PaymentServiceImpl implements PaymentService {
     @Transactional
     @Override
     public void removeByTaskId(final UUID taskId) {
-        paymentRepository.removeOrderByAndTaskId(taskId);
+        paymentRepository.removeByTaskId(taskId);
     }
 }

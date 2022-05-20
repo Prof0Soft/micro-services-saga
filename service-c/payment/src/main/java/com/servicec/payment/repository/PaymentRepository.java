@@ -11,7 +11,8 @@ import java.util.UUID;
  * @author M.Bezmen
  */
 @Repository
-public interface PaymentRepository extends JpaRepository<Payment, Long> {
+public interface PaymentRepository extends JpaRepository<Payment, UUID> {
+
     @Modifying
-    boolean removeOrderByAndTaskId(UUID taskId);
+    boolean removeByTaskId(UUID taskId);
 }
