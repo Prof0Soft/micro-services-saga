@@ -4,6 +4,8 @@ target/
 !**/src/main/**/target/
 !**/src/test/**/target/
 logs/
+logsarchived/
+*.log
 
 ### STS ###
 .apt_generated
@@ -19,6 +21,7 @@ logs/
 *.iws
 *.iml
 *.ipr
+
 
 ### NetBeans ###
 /nbproject/private/
