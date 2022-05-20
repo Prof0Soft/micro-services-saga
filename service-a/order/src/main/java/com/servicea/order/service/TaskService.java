@@ -4,6 +4,8 @@ import com.servicea.order.dto.NewTaskDto;
 import com.servicea.order.dto.ResultDto;
 import com.servicea.order.dto.TaskInfoDto;
 import com.servicea.order.dto.TaskStatusDto;
+import com.servicea.order.entity.Task;
+import com.servicea.order.type.TaskStatus;
 
 import java.util.UUID;
 
@@ -24,4 +26,7 @@ public interface TaskService {
     ResultDto finishTask(final UUID taskId);
 
     ResultDto failTask(final UUID taskId);
+
+    Task updateTaskStatusById(UUID taskId, TaskStatus newStatus);
 }
+

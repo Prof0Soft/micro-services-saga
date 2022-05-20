@@ -5,7 +5,11 @@ import com.servicea.order.dto.ResultDto;
 import com.servicea.order.dto.TaskInfoDto;
 import com.servicea.order.dto.TaskStatusDto;
 import com.servicea.order.entity.Task;
-import com.servicea.order.exception.*;
+import com.servicea.order.exception.NotFoundException;
+import com.servicea.order.exception.TaskAlreadyProcessedException;
+import com.servicea.order.exception.TaskNotFinishedException;
+import com.servicea.order.exception.TaskNotFoundException;
+import com.servicea.order.exception.TaskNotRunningException;
 import com.servicea.order.mapper.TaskMapper;
 import com.servicea.order.repository.TaskRepository;
 import com.servicea.order.service.OrderService;
@@ -134,7 +138,9 @@ public class TaskServiceImpl implements TaskService {
         return mapper.toResultDto(task);
     }
 
-    private Task updateTaskStatusById(final UUID taskId, final TaskStatus newStatus) {
+    @Transactional
+    @Override
+    public Task updateTaskStatusById(final UUID taskId, final TaskStatus newStatus) {
         return repository.findById(taskId).map(task -> {
             task.setStatus(newStatus);
             return repository.save(task);

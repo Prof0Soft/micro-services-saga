@@ -4,6 +4,7 @@ import com.servicea.order.dto.OrderDto;
 import com.servicea.order.dto.ResultDto;
 import com.servicea.order.dto.TaskStatusDto;
 import com.servicea.order.entity.Task;
+import com.servicea.order.exception.TaskNotRunningException;
 import com.servicea.order.service.OrderService;
 import com.servicea.order.service.SagaClientService;
 import com.servicea.order.service.TaskExecutor;
@@ -21,6 +22,8 @@ import java.util.UUID;
 @Slf4j
 @Component
 public class TaskExecutorImpl implements TaskExecutor {
+
+    private static final String SERVICE_NAME = "Service_A";
     private final OrderService orderService;
     private final TaskService taskService;
     private final SagaClientService sagaClientService;
@@ -40,11 +43,12 @@ public class TaskExecutorImpl implements TaskExecutor {
         ResultDto result;
         try {
             if (isCancelled(task.getId())) {
-                return;
+                throw new TaskNotRunningException(task.getId());
             }
+
             for (int i = 0; i < 100; i += 10) {
                 log.info("Task processing..." + i + "%");
-                Thread.sleep(1000L);
+                Thread.sleep(5000L);
 
                 if (rand.nextInt(100) + 1 < 2) {
                     throw new IllegalArgumentException("imitation of an exceptional situation");
@@ -56,15 +60,21 @@ public class TaskExecutorImpl implements TaskExecutor {
             orderService.create(orderDto);
 
             result = taskService.finishTask(task.getId());
+        } catch (TaskNotRunningException ex) {
+            log.warn("Task was canceled.");
+            result = new ResultDto(task.getId(), SERVICE_NAME, TaskStatus.CANCELED);
+            taskService.updateTaskStatusById(task.getId(), TaskStatus.CANCELED);
+
         } catch (Exception e) {
             log.error("Error execute task with id: {}", task.getId(), e);
             result = taskService.failTask(task.getId());
         }
+
         sagaClientService.reply(result);
     }
 
     private boolean isCancelled(final UUID taskId) {
         final TaskStatusDto task = taskService.getTaskStatus(taskId);
-        return task.getStatus().equals(TaskStatus.CANCELING);
+        return task.getStatus() == TaskStatus.CANCELED;
     }
 }
