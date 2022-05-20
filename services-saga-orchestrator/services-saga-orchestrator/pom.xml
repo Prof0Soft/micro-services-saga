@@ -10,7 +10,7 @@
     </parent>
     <groupId>com.services-saga-orchestrator</groupId>
     <artifactId>services-saga-orchestrator</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <version>1.0.0</version>
     <name>services-saga-orchestrator</name>
     <description>services-saga-orchestrator</description>
     <properties>

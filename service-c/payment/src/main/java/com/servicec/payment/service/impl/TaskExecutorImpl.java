@@ -4,6 +4,7 @@ import com.servicec.payment.dto.PaymentDto;
 import com.servicec.payment.dto.ResultDto;
 import com.servicec.payment.dto.TaskStatusDto;
 import com.servicec.payment.entity.Task;
+import com.servicec.payment.exception.TaskNotRunningException;
 import com.servicec.payment.service.PaymentService;
 import com.servicec.payment.service.SagaClientService;
 import com.servicec.payment.service.TaskExecutor;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @Slf4j
 @Component
 public class TaskExecutorImpl implements TaskExecutor {
+    private static final String SERVICE_NAME = "Service_C";
     private final PaymentService paymentService;
     private final TaskService taskService;
     private final SagaClientService sagaClientService;
@@ -40,26 +42,33 @@ public class TaskExecutorImpl implements TaskExecutor {
         ResultDto result;
         try {
             if (isCancelled(task.getId())) {
-                return;
+                throw new TaskNotRunningException(task.getId());
             }
+
             for (int i = 0; i < 100; i += 10) {
                 log.info("Task processing..." + i + "%");
                 Thread.sleep(1000L);
 
-                if (rand.nextInt(100) + 1 < 90) {
+                if (rand.nextInt(100) + 1 < 2) {
                     throw new IllegalArgumentException("imitation of an exceptional situation");
                 }
             }
 
-            PaymentDto paymentDto = new PaymentDto();
-            paymentDto.setTaskId(task.getId());
-            paymentService.create(paymentDto);
+            PaymentDto orderDto = new PaymentDto();
+            orderDto.setTaskId(task.getId());
+            paymentService.create(orderDto);
 
             result = taskService.finishTask(task.getId());
+        } catch (TaskNotRunningException ex) {
+            log.warn("Task was canceled.");
+            result = new ResultDto(task.getId(), SERVICE_NAME, TaskStatus.CANCELED);
+            taskService.updateTaskStatusById(task.getId(), TaskStatus.CANCELED);
+
         } catch (Exception e) {
             log.error("Error execute task with id: {}", task.getId(), e);
             result = taskService.failTask(task.getId());
         }
+
         sagaClientService.reply(result);
     }
 

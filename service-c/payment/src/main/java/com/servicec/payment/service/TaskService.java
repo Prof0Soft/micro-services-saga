@@ -4,6 +4,8 @@ import com.servicec.payment.dto.NewTaskDto;
 import com.servicec.payment.dto.ResultDto;
 import com.servicec.payment.dto.TaskInfoDto;
 import com.servicec.payment.dto.TaskStatusDto;
+import com.servicec.payment.entity.Task;
+import com.servicec.payment.type.TaskStatus;
 
 import java.util.UUID;
 
@@ -24,4 +26,6 @@ public interface TaskService {
     ResultDto finishTask(final UUID taskId);
 
     ResultDto failTask(final UUID taskId);
+
+    Task updateTaskStatusById(UUID id, TaskStatus canceled);
 }

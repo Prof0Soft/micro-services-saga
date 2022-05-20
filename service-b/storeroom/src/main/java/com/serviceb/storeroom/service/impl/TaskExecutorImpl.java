@@ -4,6 +4,7 @@ import com.serviceb.storeroom.dto.ItemReservationDto;
 import com.serviceb.storeroom.dto.ResultDto;
 import com.serviceb.storeroom.dto.TaskStatusDto;
 import com.serviceb.storeroom.entity.Task;
+import com.serviceb.storeroom.exception.TaskNotRunningException;
 import com.serviceb.storeroom.service.ItemReservationService;
 import com.serviceb.storeroom.service.SagaClientService;
 import com.serviceb.storeroom.service.TaskExecutor;
@@ -21,6 +22,7 @@ import java.util.UUID;
 @Slf4j
 @Component
 public class TaskExecutorImpl implements TaskExecutor {
+    private static final String SERVICE_NAME = "Service_B";
     private final ItemReservationService itemReservationService;
     private final TaskService taskService;
     private final SagaClientService sagaClientService;
@@ -40,8 +42,9 @@ public class TaskExecutorImpl implements TaskExecutor {
         ResultDto result;
         try {
             if (isCancelled(task.getId())) {
-                return;
+                throw new TaskNotRunningException(task.getId());
             }
+
             for (int i = 0; i < 100; i += 10) {
                 log.info("Task processing..." + i + "%");
                 Thread.sleep(1000L);
@@ -56,10 +59,16 @@ public class TaskExecutorImpl implements TaskExecutor {
             itemReservationService.create(orderDto);
 
             result = taskService.finishTask(task.getId());
+        } catch (TaskNotRunningException ex) {
+            log.warn("Task was canceled.");
+            result = new ResultDto(task.getId(), SERVICE_NAME, TaskStatus.CANCELED);
+            taskService.updateTaskStatusById(task.getId(), TaskStatus.CANCELED);
+
         } catch (Exception e) {
             log.error("Error execute task with id: {}", task.getId(), e);
             result = taskService.failTask(task.getId());
         }
+
         sagaClientService.reply(result);
     }
 

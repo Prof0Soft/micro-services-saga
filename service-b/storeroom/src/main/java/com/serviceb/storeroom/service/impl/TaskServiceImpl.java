@@ -137,7 +137,9 @@ public class TaskServiceImpl implements TaskService {
         return mapper.toResultDto(task);
     }
 
-    private Task updateTaskStatusById(final UUID taskId, final TaskStatus newStatus) {
+    @Transactional
+    @Override
+    public Task updateTaskStatusById(final UUID taskId, final TaskStatus newStatus) {
         return repository.findById(taskId).map(task -> {
             task.setStatus(newStatus);
             return repository.save(task);
