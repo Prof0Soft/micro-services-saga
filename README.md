@@ -9,7 +9,7 @@ The Saga Orchestration pattern is used to manage flow.
 
 You can see how it works on the image below.
 
-<img style="width: 500px;" src="./docs/saga_orchestrator_flow.jpg" alt="My cool logo"/>
+<img src="./docs/saga_orchestrator_flow.jpg" alt="My cool logo"/>
 
 ## Steps to start the application locally
 
