@@ -1,53 +1,50 @@
 # Microservice application
 
-This the readme file describe general conception and step for start application local.
+This readme file describes the general concept and steps for starting the application locally.
 
-## General conception
+## General concept
 
-All precess include three steps. (service-a -> service-b -> service-c). For manage flow use saga orchestration.
-Blow on image show how it works
-<img src="./saga_orchestrator_flow.jpg" alt="My cool logo"/>
+Whole process includes three steps. (service-a -> service-b -> service-c).
+The Saga Orchestration pattern is used to manage flow.
 
-## Steps for start application locally
+You can see how it works on the image below.
 
-1. Clone sources from gitHub repository:
+<img style="width: 500px;" src="./docs/saga_orchestrator_flow.jpg" alt="My cool logo"/>
 
+## Steps to start the application locally
+
+1. Clone sources from the GitHub repository:
 ````
 git@github.com:Prof0Soft/micro-services-saga.git
 ````
 
-2. Go to project directory:
-
+2. Go to the project directory:
 ````
-   cd micro-services-saga
+cd micro-services-saga
 ````
-
 3. Run databases using docker compose:
-
 ````
 docker-compose run
 ````
 
 4. Build modules from source
-
 ````
 mvn package <module src dir>
 ````
 
-6. Run step by step services
-
+6. Run services step by step
 ````
 java -jar <module jar filepath>
 ````
 
-### How look like process
+### The process looks like
 ````
 orchestrator logs:
-2022-05-20 13:58:45.819  INFO 14804 --- [nio-8080-exec-9] c.s.s.service.impl.OrderServiceImpl      : Start create order process
-2022-05-20 13:58:45.826  INFO 14804 --- [nio-8080-exec-9] c.s.s.s.i.SagaOrchestratorServiceImpl    : Initiate saga service.
-2022-05-20 13:59:00.818  INFO 14804 --- [nio-8080-exec-3] c.s.s.service.impl.OrderServiceImpl      : Cancel order for id c0a86430-80e1-12a7-8180-e11eadbe0004
-2022-05-20 13:59:00.821  INFO 14804 --- [nio-8080-exec-3] c.s.s.s.i.SagaOrchestratorServiceImpl    : Run cancel process with task id c0a86430-80e1-12a7-8180-e11eadbe0004
-2022-05-20 13:59:37.184  INFO 14804 --- [nio-8080-exec-2] c.s.s.s.i.SagaOrchestratorServiceImpl    : Run revert flow.
+[nio-8080-exec-9] c.s.s.service.impl.OrderServiceImpl      : Start create order process
+[nio-8080-exec-9] c.s.s.s.i.SagaOrchestratorServiceImpl    : Initiate saga service.
+[nio-8080-exec-3] c.s.s.service.impl.OrderServiceImpl      : Cancel order for id c0a86430-80e1-12a7-8180-e11eadbe0004
+[nio-8080-exec-3] c.s.s.s.i.SagaOrchestratorServiceImpl    : Run cancel process with task id c0a86430-80e1-12a7-8180-e11eadbe0004
+[nio-8080-exec-2] c.s.s.s.i.SagaOrchestratorServiceImpl    : Run revert flow.
 
 services logs:
 [nio-8081-exec-1] c.s.order.service.impl.TaskServiceImpl   : Task c0a86430-80e1-12a7-8180-e11eadbe0004 created
@@ -68,4 +65,4 @@ services logs:
 ````
 ### Database
 
-Database initiate from docker compose which is located in root folder in project.
+Database is initiated from docker compose which is located in the root folder in the project.
