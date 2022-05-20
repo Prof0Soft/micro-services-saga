@@ -193,8 +193,11 @@ class SagaOrchestratorServiceImplTest {
 
         when(sagaProcessRepository.findByOrderId(UUID.fromString(taskId))).thenReturn(flow);
         when(mcBClient.cancelTask(id)).thenReturn(new TaskStatusDto());
+
+        //WHEN
         sagaService.cancelSaga(id);
 
+        //THEN
         verify(sagaProcessRepository, times(2)).save(any());
         verify(mcBClient).cancelTask(id);
         verify(mcAClient).revertTask(id);
@@ -203,15 +206,22 @@ class SagaOrchestratorServiceImplTest {
 
     @Test
     void cancelSaga_NotFound() {
+        //GIVEN
         String taskId = "23e4567-e89b-12d3-a456-426614174000";
         UUID id = UUID.fromString(taskId);
 
         when(sagaProcessRepository.findByOrderId(UUID.fromString(taskId))).thenReturn(null);
-        assertThrows(NotFoundException.class, () -> sagaService.cancelSaga(id));
+
+        //THEN
+        assertThrows(NotFoundException.class, () -> {
+            //WHEN
+            sagaService.cancelSaga(id);
+        });
     }
 
     @Test
     void cancelSaga_BadRequest() {
+        //GIVEN
         String taskId = "23e4567-e89b-12d3-a456-426614174000";
         UUID id = UUID.fromString(taskId);
 
@@ -225,7 +235,11 @@ class SagaOrchestratorServiceImplTest {
 
         when(sagaProcessRepository.findByOrderId(UUID.fromString(taskId))).thenReturn(flow);
 
-        assertThrows(BadRequestException.class, () -> sagaService.cancelSaga(id));
+        //THEN
+        assertThrows(BadRequestException.class, () -> {
+            //WHEN
+            sagaService.cancelSaga(id);
+        });
     }
 
 }

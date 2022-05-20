@@ -4,8 +4,8 @@ import com.servicessagaorchestrator.servicessagaorchestrator.dto.OrderDto;
 import com.servicessagaorchestrator.servicessagaorchestrator.dto.OrderStatusDto;
 import com.servicessagaorchestrator.servicessagaorchestrator.entity.Order;
 import com.servicessagaorchestrator.servicessagaorchestrator.entity.SagaProcess;
-import com.servicessagaorchestrator.servicessagaorchestrator.enums.BookingFlow;
 import com.servicessagaorchestrator.servicessagaorchestrator.enums.TaskStatus;
+import com.servicessagaorchestrator.servicessagaorchestrator.exception.BadRequestException;
 import com.servicessagaorchestrator.servicessagaorchestrator.exception.NotFoundException;
 import com.servicessagaorchestrator.servicessagaorchestrator.mapper.OrderMapper;
 import com.servicessagaorchestrator.servicessagaorchestrator.mockdata.SagaProcessMock;
@@ -108,8 +108,12 @@ class OrderServiceImplTest {
         when(orderRepository.findById(orderId)).thenReturn(Optional.empty());
 
         //THEN
-        assertThrows(NotFoundException.class, () -> orderService.getOrderStatus(orderId));
+        assertThrows(NotFoundException.class, () -> {
+            //WHEN
+            orderService.getOrderStatus(orderId);
+        });
     }
+
     @Test
     void cancelOrder() {
         //GIVEN
@@ -131,5 +135,42 @@ class OrderServiceImplTest {
         //THEN
         verify(sagaService).cancelSaga(orderId);
         assertEquals(expected, actual);
+    }
+
+    @Test
+    void cancelOrder_NotFound() {
+        //GIVEN
+        final String taskId = "23e4567-e89b-12d3-a456-426614174000";
+        final UUID orderId = UUID.fromString(taskId);
+
+        //WHEN
+        when(orderRepository.findById(orderId)).thenReturn(Optional.empty());
+
+        //THEN
+        assertThrows(NotFoundException.class, () -> {
+            //WHEN
+            orderService.cancelOrder(orderId);
+        });
+
+    }
+
+    @Test
+    void cancelOrder_BadRequest() {
+        //GIVEN
+        final String taskId = "23e4567-e89b-12d3-a456-426614174000";
+        final UUID orderId = UUID.fromString(taskId);
+
+        final Order order = new Order();
+        order.setId(orderId);
+        order.setStatus(TaskStatus.DONE);
+
+        //WHEN
+        when(orderRepository.findById(orderId)).thenReturn(Optional.of(order));
+
+        //THEN
+        assertThrows(BadRequestException.class, () -> {
+            //WHEN
+            orderService.cancelOrder(orderId);
+        });
     }
 }

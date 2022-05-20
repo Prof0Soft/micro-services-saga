@@ -1,7 +1,6 @@
 package com.servicessagaorchestrator.servicessagaorchestrator.enums;
 
 import com.servicessagaorchestrator.servicessagaorchestrator.entity.Step;
-import com.servicessagaorchestrator.servicessagaorchestrator.service.client.StartProcessClientService;
 
 import java.util.Arrays;
 import java.util.List;
@@ -26,6 +25,7 @@ public enum BookingFlow {
                     step.setStatus(TaskStatus.NEW);
                     step.setBookingFlow(bookingFlow);
                     order.getAndIncrement();
+
                     return step;
                 })
                 .collect(Collectors.toList());

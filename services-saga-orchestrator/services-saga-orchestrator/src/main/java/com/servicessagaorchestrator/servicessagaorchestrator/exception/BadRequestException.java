@@ -11,4 +11,7 @@ public class BadRequestException extends RuntimeException {
     public BadRequestException(final String taskId) {
         super("Order with id: " + taskId + "can't be canceling.");
     }
+    public BadRequestException() {
+        super();
+    }
 }

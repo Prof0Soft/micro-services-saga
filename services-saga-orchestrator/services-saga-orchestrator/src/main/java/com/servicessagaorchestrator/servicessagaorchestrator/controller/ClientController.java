@@ -12,6 +12,8 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.UUID;
 
 /**
+ * Client controller for orchestrator control.
+ *
  * @author Sergey B.
  * 18.05.2022
  */
@@ -25,11 +27,6 @@ public class ClientController {
         this.orderService = orderService;
     }
 
-    /**
-     * Initial process.
-     *
-     * @return
-     */
     @PostMapping()
     public OrderDto createOrder() {
         return orderService.createOrder();
@@ -41,8 +38,8 @@ public class ClientController {
     }
 
     @PostMapping("/{id}/cancel")
-    public OrderStatusDto cancelOrder(@PathVariable final UUID id) {
-        return orderService.cancelOrder(id);
+    public OrderStatusDto cancelOrder(@PathVariable final String id) {
+        return orderService.cancelOrder(UUID.fromString(id));
     }
 
 }

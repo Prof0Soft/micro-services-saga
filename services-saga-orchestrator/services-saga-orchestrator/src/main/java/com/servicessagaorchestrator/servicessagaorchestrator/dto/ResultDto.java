@@ -6,6 +6,8 @@ import lombok.Data;
 import java.util.UUID;
 
 /**
+ * The DTO consist process result after services.
+ *
  * @author M.Bezmen
  */
 @Data
