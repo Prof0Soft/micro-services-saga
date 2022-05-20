@@ -6,10 +6,7 @@ This the readme file describe general conception and step for start application 
 
 All precess include three steps. (service-a -> service-b -> service-c). For manage flow use saga orchestration.
 Blow on image show how it works 
-
-```
 ![](Saga orchestrator flow.jpg)
-```
 
 ## Steps for start application locally
 
