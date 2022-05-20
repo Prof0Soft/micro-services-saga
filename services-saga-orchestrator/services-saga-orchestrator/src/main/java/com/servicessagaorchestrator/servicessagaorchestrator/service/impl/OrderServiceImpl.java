@@ -38,6 +38,11 @@ public class OrderServiceImpl implements OrderService {
         this.orderRepository = orderRepository;
     }
 
+    /**
+     * Create oreder.
+     *
+     * @return {@link OrderDto }
+     */
     @Transactional
     @Override
     public OrderDto createOrder() {

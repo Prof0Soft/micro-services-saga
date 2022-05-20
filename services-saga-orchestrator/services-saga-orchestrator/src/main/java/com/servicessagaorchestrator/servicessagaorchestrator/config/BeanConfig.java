@@ -8,6 +8,7 @@ import com.servicessagaorchestrator.servicessagaorchestrator.enums.BookingFlow;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 

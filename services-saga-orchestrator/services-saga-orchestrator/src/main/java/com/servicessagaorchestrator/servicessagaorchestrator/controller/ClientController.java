@@ -19,10 +19,10 @@ import java.util.UUID;
 @RequestMapping("/orders")
 public class ClientController {
 
-    private final OrderService service;
+    private final OrderService orderService;
 
-    public ClientController(final OrderService service) {
-        this.service = service;
+    public ClientController(final OrderService orderService) {
+        this.orderService = orderService;
     }
 
     /**
@@ -32,17 +32,17 @@ public class ClientController {
      */
     @PostMapping()
     public OrderDto createOrder() {
-        return service.createOrder();
+        return orderService.createOrder();
     }
 
     @GetMapping("/{id}/status")
     public OrderStatusDto getOrderStatus(@PathVariable final UUID id) {
-        return service.getOrderStatus(id);
+        return orderService.getOrderStatus(id);
     }
 
     @PostMapping("/{id}/cancel")
     public OrderStatusDto cancelOrder(@PathVariable final UUID id) {
-        return service.cancelOrder(id);
+        return orderService.cancelOrder(id);
     }
 
 }
