@@ -66,3 +66,10 @@ services logs:
 ### Database
 
 Database is initiated from docker compose which is located in the root folder in the project.
+
+### Tests
+The main test was done for orchestrator as a main module in project. 
+Was done all positive test for public methods of services.
+General coverage for methods is 85 percents.
+All list with coverage you can see bellow.
+<img src="./docs/coverage.png"/>
