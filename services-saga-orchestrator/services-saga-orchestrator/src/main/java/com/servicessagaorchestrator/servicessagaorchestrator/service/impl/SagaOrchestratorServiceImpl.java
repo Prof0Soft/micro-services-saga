@@ -201,10 +201,10 @@ public class SagaOrchestratorServiceImpl implements SagaService {
         final Optional<Step> previousStepOptional = getPreviousStep(flow);
 
         if (previousStepOptional.isPresent()) {
+            submitRevert(previousStepOptional, flow.getOrder().getId());
             flow.setActiveStepId(previousStepOptional.get().getId());
             revertFlow(flow);
         }
-        submitRevert(previousStepOptional, flow.getOrder().getId());
     }
 
     private void handleDoneStep(final ResultDto result) {
@@ -226,7 +226,7 @@ public class SagaOrchestratorServiceImpl implements SagaService {
     }
 
     private Optional<Step> getPreviousStep(final SagaProcess flow) {
-        log.debug("Get privius step.");
+        log.debug("Get previous step.");
         log.debug("Method objects: {}", flow);
         final Step activeStep = getActiveStep(flow)
                 .orElseThrow(() -> new IllegalStateException("Active step not found"));
